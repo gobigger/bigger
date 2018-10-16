@@ -304,7 +304,7 @@ var (
 
 
 const (
-	EventBiggerStart		= ".bigger.start"
+	EventBiggerStart	= ".bigger.start"
 	EventBiggerEnd		= ".bigger.end"
 
 	EventDataCreate		= ".data.create"
@@ -313,7 +313,7 @@ const (
 
 	EventSocketUpgrade	= ".socket.upgrade"
 	EventSocketDegrade	= ".socket.degrade"
-	EventSocketFollow		= ".socket.follow"
+	EventSocketFollow	= ".socket.follow"
 	EventSocketUnfollow	= ".socket.unfollow"
 )
 
@@ -344,6 +344,14 @@ var (
 	BiggerInvokingConfig = Map{
 		"count": Map{
 			"type": "int", "must": true, "auto": int64(0), "name": "统计", "text": "统计",
+		},
+		"items": Map{
+			"type": "[map]", "must": true, "auto": []Map{}, "name": "列表", "text": "列表",
+		},
+	}
+	BiggerInvokerConfig = Map{
+		"item": Map{
+			"type": "map", "must": true, "auto": Map{}, "name": "单体", "text": "单体",
 		},
 		"items": Map{
 			"type": "[map]", "must": true, "auto": []Map{}, "name": "列表", "text": "列表",

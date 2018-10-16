@@ -147,8 +147,6 @@ func (module *httpModule) newGroup(name string, roots ...string) (*httpGroup) {
 	}
 	return &httpGroup{ module, name, root }
 }
-
-
 //HTTP分组注册
 func (group *httpGroup) Router(name string, config Map, overrides ...bool) {
 	realName := fmt.Sprintf("%s.%s", group.name, name)
@@ -164,9 +162,6 @@ func (group *httpGroup) Router(name string, config Map, overrides ...bool) {
 	}
 	group.http.Router(realName, config, overrides...)
 }
-
-
-
 
 
 func (module *httpModule) Driver(name string, driver HttpDriver, overrides ...bool) {

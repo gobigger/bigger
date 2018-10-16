@@ -7,6 +7,8 @@ sys 注册 sys.index
 有时候访问sys.index，还是显示全局的
 好像注册的顺序有问题，sys.index没有覆盖*.index中的sys.index
 
+注册时候顺序没有问题， 但是chunks方法拿到的是map，是无序的，core需要加一个数组来保证顺序
+
 
 
 view层template支持定义
@@ -14,17 +16,20 @@ Bigger.Template(name, default)
 这样就可以在不使用vfs的情况下， 内置一些文档的VIEW
 
 
-service的定义，直接直接event, queue 的调用，如
 
+
+
+<!-- service的定义，直接直接event, queue 的调用，如
 Bigger.Register("name", Map{
     "event": true, "queue": true,
     "name": name, "text": "text",
     "action": action,
 })
+还是不要混在一起，分开自己处理吧 -->
 
 
 
-sv.Invoke的时候，连带setting
+<!-- sv.Invoke的时候，连带setting ok -->
 
 
 

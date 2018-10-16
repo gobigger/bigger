@@ -780,6 +780,21 @@ func (ctx *Context) Invoking(name string, offset, limit int64, params ...Map) (i
 
 	return 0, []Map{ result }
 }
+func (ctx *Context) Invoker(name string, params ...Map) (Map,[]Map) {
+	result := ctx.Invoke(name, params...)
+	if result == nil {
+		return nil, []Map{}
+	}
+
+	item,itemOK := result["item"].(Map)
+	items,itemsOK := result["items"].([]Map)
+
+	if itemOK && itemsOK {
+		return item, items
+	}
+
+	return result, []Map{ result }
+}
 
 func (ctx *Context) Download(code string, names ...string) {
 	reader, data, err := Bigger.Download(code)
@@ -1314,8 +1329,12 @@ func (ctx *Context) Alert(err *Error, urls ...string) {
 		vv.buffer.Close()
 	}
 	
+	if err.Code() == 0 {
+		ctx.Code = http.StatusOK
+	} else {
+		ctx.Code = http.StatusInternalServerError
+	}
 	text := err.Lang(ctx.Lang).String()
-	ctx.Code = http.StatusOK
 
 	if len(urls) > 0 {
 		text = fmt.Sprintf(`<script type="text/javascript">alert("%s"); location.href="%s";</script>`, text, urls[0])
@@ -1332,6 +1351,12 @@ func (ctx *Context) Show(err *Error, urls ...string) {
 
 	code := err.Code()
 	text := err.Lang(ctx.Lang).String()
+
+	if err.Code() == 0 {
+		ctx.Code = http.StatusOK
+	} else {
+		ctx.Code = http.StatusInternalServerError
+	}
 
 	m := Map{
 		"code": code,

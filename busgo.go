@@ -80,6 +80,9 @@ func (bigger *bigger) initing() {
     bigger.Info("bigger raft is binding on", bigger.Config.Node.Bind)
     Bigger.Info("bigger http is running at", bigger.Config.Node.Port)
     
+    //开始触发器
+    bigger.SyncTrigger(EventBiggerStart, Map{})
+
     bigger.running = true
 }
 
@@ -89,6 +92,10 @@ func (bigger *bigger) exiting() {
     }
     
     Bigger.Info("bigger end")
+
+    //结束触发器
+    bigger.SyncTrigger(EventBiggerEnd, Map{})
+
 
     mVIEW.exiting()
     mSOCKET.exiting()
@@ -625,11 +632,19 @@ func (bigger *bigger) Service(name string) (*serviceGroup) {
 func (bigger *bigger) Register(name string, config Map) {
 	mSERVICE.Register(name, config)
 }
-func (bigger *bigger) Invoke(name string, args Map) (Map,*Error) {
-	return mSERVICE.Invoke(nil, name, nil, args)
+// func (bigger *bigger) Invoke(name string, args Map) (Map,*Error) {
+// 	return mSERVICE.Invoke(nil, name, nil, args)
+// }
+//包装服务请求结果
+func (bigger *bigger) Invoke(result Map, errs ...*Error) (Map,*Error) {
+    var err *Error
+    if len(errs) > 0 {
+        err = errs[0]
+    }
+	return result, err
 }
 //包装服务请求结果
-func (bigger *bigger) Results(results []Map, errs ...*Error) (Map,*Error) {
+func (bigger *bigger) Invokes(results []Map, errs ...*Error) (Map,*Error) {
     var err *Error
     if len(errs) > 0 {
         err = errs[0]
@@ -639,7 +654,18 @@ func (bigger *bigger) Results(results []Map, errs ...*Error) (Map,*Error) {
     }, err
 }
 //包装服务请求结果
-func (bigger *bigger) Resulting(count int64, results []Map, errs ...*Error) (Map,*Error) {
+func (bigger *bigger) Invoker(item Map, items []Map, errs ...*Error) (Map,*Error) {
+    var err *Error
+    if len(errs) > 0 {
+        err = errs[0]
+    }
+    return Map{
+        "item":     item,
+        "items":    items,
+    }, err
+}
+//包装服务请求结果
+func (bigger *bigger) Invoking(count int64, results []Map, errs ...*Error) (Map,*Error) {
     var err *Error
     if len(errs) > 0 {
         err = errs[0]
@@ -656,9 +682,6 @@ func (bigger *bigger) Lock(args ...Any) (bool) {
 func (bigger *bigger) Unlock(args ...Any) {
     mMutex.Unlock(args...)
 }
-
-
-
 //----------------------- util -------------------------
 
 

@@ -19,12 +19,13 @@ type (
 	serviceLogic struct {
 		service	*serviceModule
 		ctx		*Context
+
 		Name	string
 		Setting	Map
 	}
 
 	Service struct {
-		ctx		*Context
+		Ctx		*Context
 		Lang	string
 		Zone	*time.Location
 
@@ -114,7 +115,7 @@ func (module *serviceModule) Invoke(ctx *Context, name string, setting Map, para
 	}
 
 	msv := &Service{
-		ctx: ctx, Lang: ctx.Lang, Zone: ctx.Zone,
+		Ctx: ctx, Lang: ctx.Lang, Zone: ctx.Zone,
 		Name: name, Config: config, Setting: setting,
 		Params: params, Args: args,
 	}
@@ -140,50 +141,50 @@ func (module *serviceModule) Invoke(ctx *Context, name string, setting Map, para
 }
 
 //服务上下文，依赖Context
-func (msv *Service) Erred() *Error {
-	return msv.ctx.Erred()
+func (sv *Service) Erred() *Error {
+	return sv.Ctx.Erred()
 }
-func (msv *Service) File(bases ...string) (FileBase) {
-	return msv.ctx.fileBase(bases...)
+func (sv *Service) File(bases ...string) (FileBase) {
+	return sv.Ctx.fileBase(bases...)
 }
-func (msv *Service) Data(bases ...string) (DataBase) {
-	return msv.ctx.dataBase(bases...)
+func (sv *Service) Data(bases ...string) (DataBase) {
+	return sv.Ctx.dataBase(bases...)
 }
-func (msv *Service) Cache(bases ...string) (CacheBase) {
-	return msv.ctx.cacheBase(bases...)
+func (sv *Service) Cache(bases ...string) (CacheBase) {
+	return sv.Ctx.cacheBase(bases...)
 }
-func (msv *Service) Service(name string, settings ...Map) (*serviceLogic) {
-	return msv.ctx.Service(name, settings...)
+func (sv *Service) Service(name string, settings ...Map) (*serviceLogic) {
+	return sv.Ctx.Service(name, settings...)
 }
-func (msv *Service) Storage(upload Map, named Any, metadata Map, bases ...string) (string) {
-	return msv.ctx.Storage(upload, named, metadata, bases...)
+func (sv *Service) Storage(upload Map, named Any, metadata Map, bases ...string) (string) {
+	return sv.Ctx.Storage(upload, named, metadata, bases...)
 }
-func (msv *Service) Invoke(name string, params ...Map) (Map) {
-	msv.ctx.lastError = nil
+func (sv *Service) Invoke(name string, params ...Map) (Map) {
+	sv.Ctx.lastError = nil
 
 	param := Map{}
 	if len(params) > 0 {
 		param = params[0]
 	}
-	result,err := mSERVICE.Invoke(msv.ctx, name, msv.Setting, param)
+	result,err := mSERVICE.Invoke(sv.Ctx, name, sv.Setting, param)
 	if err != nil {
-		msv.ctx.lastError = err
+		sv.Ctx.lastError = err
 	}
 	return result
 }
 
-// func (msv *Service) Signed(key string) (bool) {
-// 	return msv.ctx.Signed(key)
+// func (sv *Service) Signed(key string) (bool) {
+// 	return sv.Ctx.Signed(key)
 // }
-// func (msv *Service) Signin(key string, id,name Any) {
-// 	msv.ctx.Signin(key, id, name)
+// func (sv *Service) Signin(key string, id,name Any) {
+// 	sv.Ctx.Signin(key, id, name)
 // }
-// func (msv *Service) Signout(key string) {
-// 	msv.ctx.Signout(key)
+// func (sv *Service) Signout(key string) {
+// 	sv.Ctx.Signout(key)
 // }
-// func (msv *Service) Signal(key string) Any {
-// 	return msv.ctx.Signal(key)
+// func (sv *Service) Signal(key string) Any {
+// 	return sv.Ctx.Signal(key)
 // }
-// func (msv *Service) Signer(key string) Any {
-// 	return msv.ctx.Signer(key)
+// func (sv *Service) Signer(key string) Any {
+// 	return sv.Ctx.Signer(key)
 // }
