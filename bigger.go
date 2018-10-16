@@ -574,18 +574,21 @@ func (bigger *bigger) Site(name string, roots ...string) (*httpGroup) {
 func (bigger *bigger) Router(name string, config Map, overrides ...bool) {
     mHTTP.Router(name, config, overrides...)
 }
+func (bigger *bigger) Routers(sites ...string) (Map) {
+    return mHTTP.Routers(sites...)
+}
 func (bigger *bigger) Filter(name string, config Map, overrides ...bool) {
     mHTTP.Filter(name, config, overrides...)
 }
 func (bigger *bigger) Handler(name string, config Map, overrides ...bool) {
     mHTTP.Handler(name, config, overrides...)
 }
+func (bigger *bigger) Route(name string, args... Map) string {
+    return bigger.url.Route(name, args...)
+}
 //---------------------- view --------------------------
 func (bigger *bigger) Helper(name string, config Map, overrides ...bool) {
     mVIEW.Helper(name, config, overrides...)
-}
-func (bigger *bigger) Route(name string, args... Map) string {
-    return bigger.url.Route(name, args...)
 }
 //---------------------- socket --------------------------
 func (bigger *bigger) Socket(name string, config Map, overrides ...bool) {
@@ -849,4 +852,18 @@ func (bigger *bigger) Caller(skips ...int) (string,int,string,bool) {
 		line = 0	
     }
     return file,line,funcName,ok
+}
+
+func (bigger *bigger) Define(tttt string, must bool, name string, exts ...Map) Map {
+    config := Map{
+        kTYPE: tttt, kMUST: must, kNAME: name,
+    }
+
+    if len(exts) > 0 {
+        for k,v := range exts[0] {
+            config[k] = v
+        }
+    }
+
+    return config
 }

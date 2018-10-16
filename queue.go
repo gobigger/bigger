@@ -85,7 +85,7 @@ func (module *queueModule) Driver(name string, driver QueueDriver, overrides ...
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -96,7 +96,7 @@ func (module *queueModule) Driver(name string, driver QueueDriver, overrides ...
 
 //liner只是更新现有配置中的lines字段
 func (module *queueModule) Liner(name string, lines int, overrides ...bool) {
-	if config,ok := module.router.chunk(name).(Map); ok {
+	if config,ok := module.router.chunkdata(name).(Map); ok {
 		config[kLINES] = lines
 		module.Router(name, config, overrides...)
 	}
@@ -114,7 +114,7 @@ func (module *queueModule) Router(name string, config Map, overrides ...bool) {
     if override {
 		module.router.chunking(name, config)
     } else {
-        if module.router.chunk(name) == nil {
+        if module.router.chunkdata(name) == nil {
 			module.router.chunking(name, config)
         }
     }
@@ -128,7 +128,7 @@ func (module *queueModule) Filter(name string, config Map, overrides ...bool) {
     if override {
 		module.filter.chunking(name, config)
     } else {
-        if module.filter.chunk(name) == nil {
+        if module.filter.chunkdata(name) == nil {
 			module.filter.chunking(name, config)
         }
     }
@@ -142,7 +142,7 @@ func (module *queueModule) Handler(name string, config Map, overrides ...bool) {
     if override {
 		module.handler.chunking(name, config)
     } else {
-        if module.handler.chunk(name) == nil {
+        if module.handler.chunkdata(name) == nil {
 			module.handler.chunking(name, config)
         }
     }
@@ -200,7 +200,7 @@ func (module *queueModule) DeferredProduce(name string, delay time.Duration, val
 
 
 func (module *queueModule) connecting(name string, config QueueConfig) (QueueConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(QueueDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(QueueDriver); ok {
         return driver.Connect(name, config)
     }
     panic("[队列]不支持的驱动：" + config.Driver)
@@ -230,17 +230,17 @@ func (module *queueModule) initing() {
 
 		//注册队列
 		routers := module.router.chunks()
-		for name,val := range routers {
-			if vcfg,ok := val.(Map); ok {
+		for _,val := range routers {
+			if vcfg,ok := val.data.(Map); ok {
 				
 				regis := module.registering(vcfg)
 
 				//如果配置文件中有定义线程数
-				if vv,ok := config.Liner[name]; ok {
+				if vv,ok := config.Liner[val.name]; ok {
 					regis.Lines = vv
 				}
 
-				err := connect.Register(name, regis)
+				err := connect.Register(val.name, regis)
 				if err != nil {
 					panic("[队列]注册订阅失败：" + err.Error())
 				}
@@ -294,7 +294,7 @@ func (module *queueModule) newbie(newbie coreNewbie) (*Error) {
 	}
 
 	for _,connect := range module.connects {
-		if config,ok := module.router.chunk(newbie.block).(Map); ok {
+		if config,ok := module.router.chunkdata(newbie.block).(Map); ok {
 			name := newbie.block
 			regis := module.registering(config)
 
@@ -348,7 +348,7 @@ func (module *queueModule) deniedHandlerActions() ([]Funcing) {
 func (module *queueModule) serve(req *QueueRequest, res QueueResponse) {
 	ctx := newQueueContext(req, res)
 
-	if config,ok := module.router.chunk(ctx.Name).(Map); ok {
+	if config,ok := module.router.chunkdata(ctx.Name).(Map); ok {
 		ctx.Config = config
 	}
 		

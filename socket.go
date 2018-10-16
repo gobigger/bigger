@@ -115,7 +115,7 @@ func (module *socketModule) Driver(name string, driver SocketDriver, overrides .
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -133,7 +133,7 @@ func (module *socketModule) Router(name string, config Map, overrides ...bool) {
     if override {
 		module.router.chunking(name, config)
     } else {
-        if module.router.chunk(name) == nil {
+        if module.router.chunkdata(name) == nil {
 			module.router.chunking(name, config)
         }
     }
@@ -147,7 +147,7 @@ func (module *socketModule) Filter(name string, config Map, overrides ...bool) {
     if override {
 		module.filter.chunking(name, config)
     } else {
-        if module.filter.chunk(name) == nil {
+        if module.filter.chunkdata(name) == nil {
 			module.filter.chunking(name, config)
         }
     }
@@ -161,7 +161,7 @@ func (module *socketModule) Handler(name string, config Map, overrides ...bool) 
     if override {
 		module.handler.chunking(name, config)
     } else {
-        if module.handler.chunk(name) == nil {
+        if module.handler.chunkdata(name) == nil {
 			module.handler.chunking(name, config)
         }
     }
@@ -175,7 +175,7 @@ func (module *socketModule) Command(name string, config Map, overrides ...bool) 
     if override {
 		module.command.chunking(name, config)
     } else {
-        if module.command.chunk(name) == nil {
+        if module.command.chunkdata(name) == nil {
 			module.command.chunking(name, config)
         }
     }
@@ -261,7 +261,7 @@ func (module *socketModule) Message(code string, cmd string, value Map) (*Error)
 	}
 
 	if conn,ok := module.connects[coding.Base]; ok {
-		if config,ok := module.command.chunk(cmd).(Map); ok {
+		if config,ok := module.command.chunkdata(cmd).(Map); ok {
 			mmmm := Map{ kTYPE: cmd, kDATA: value }
 
 			//包装数据
@@ -302,7 +302,7 @@ func (module *socketModule) DeferredMessage(code string, cmd string, delay time.
 	}
 
 	if conn,ok := module.connects[coding.Base]; ok {
-		if config,ok := module.command.chunk(cmd).(Map); ok {
+		if config,ok := module.command.chunkdata(cmd).(Map); ok {
 			mmmm := Map{ kTYPE: cmd, kDATA: value }
 
 			//包装数据
@@ -352,7 +352,7 @@ func (module *socketModule) Broadcast(channel string, command string, value Map,
 	}
 
 	if conn,ok := module.connects[base]; ok {
-		if config,ok := module.command.chunk(command).(Map); ok {
+		if config,ok := module.command.chunkdata(command).(Map); ok {
 			mmmm := Map{ kTYPE: command, kDATA: value }
 
 			//包装数据
@@ -401,7 +401,7 @@ func (module *socketModule) DeferredBroadcast(channel string, command string, de
 	}
 
 	if conn,ok := module.connects[base]; ok {
-		if config,ok := module.command.chunk(command).(Map); ok {
+		if config,ok := module.command.chunkdata(command).(Map); ok {
 			mmmm := Map{ kTYPE: command, kDATA: value }
 
 			//包装数据
@@ -445,7 +445,7 @@ func (module *socketModule) DeferredBroadcast(channel string, command string, de
 
 
 func (module *socketModule) connecting(name string, config SocketConfig) (SocketConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(SocketDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(SocketDriver); ok {
         return driver.Connect(name, config)
     }
     panic("[套接]不支持的驱动：" + config.Driver)
@@ -525,7 +525,7 @@ func (module *socketModule) deniedHandlerActions() ([]Funcing) {
 func (module *socketModule) serve(req *SocketRequest, res SocketResponse) {
 	ctx := newSocketContext(req, res)
 
-	if config,ok := module.router.chunk(ctx.Name).(Map); ok {
+	if config,ok := module.router.chunkdata(ctx.Name).(Map); ok {
 		ctx.Config = config
 	}
 	

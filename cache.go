@@ -59,7 +59,7 @@ func (module *cacheModule) Driver(name string, driver CacheDriver, overrides ...
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -67,7 +67,7 @@ func (module *cacheModule) Driver(name string, driver CacheDriver, overrides ...
 
 
 func (module *cacheModule) connecting(name string, config CacheConfig) (CacheConnect, *Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(CacheDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(CacheDriver); ok {
         return driver.Connect(name, config)
     }
     panic("[缓存]不支持的驱动：" + config.Driver)

@@ -92,7 +92,7 @@ func (module *eventModule) Driver(name string, driver EventDriver, overrides ...
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -110,7 +110,7 @@ func (module *eventModule) Router(name string, config Map, overrides ...bool) {
     if override {
 		module.router.chunking(name, config)
     } else {
-        if module.router.chunk(name) == nil {
+        if module.router.chunkdata(name) == nil {
 			module.router.chunking(name, config)
         }
     }
@@ -124,7 +124,7 @@ func (module *eventModule) Filter(name string, config Map, overrides ...bool) {
     if override {
 		module.filter.chunking(name, config)
     } else {
-        if module.filter.chunk(name) == nil {
+        if module.filter.chunkdata(name) == nil {
 			module.filter.chunking(name, config)
         }
     }
@@ -138,7 +138,7 @@ func (module *eventModule) Handler(name string, config Map, overrides ...bool) {
     if override {
 		module.handler.chunking(name, config)
     } else {
-        if module.handler.chunk(name) == nil {
+        if module.handler.chunkdata(name) == nil {
 			module.handler.chunking(name, config)
         }
     }
@@ -243,7 +243,7 @@ func (module *eventModule) DeferredPublish(name string, delay time.Duration, val
 
 
 func (module *eventModule) connecting(name string, config EventConfig) (EventConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(EventDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(EventDriver); ok {
         return driver.Connect(name, config)
     }
     panic("[事件]不支持的驱动：" + config.Driver)
@@ -273,12 +273,12 @@ func (module *eventModule) initing() {
 
 		//注册事件
 		routers := module.router.chunks()
-		for name,val := range routers {
-			if config,ok := val.(Map); ok {
-				
+		for _,val := range routers {
+			if config,ok := val.data.(Map); ok {
+
 				regis := module.registering(config)
 
-				err := connect.Register(name, regis)
+				err := connect.Register(val.name, regis)
 				if err != nil {
 					panic("[事件]注册订阅失败：" + err.Error())
 				}
@@ -315,7 +315,7 @@ func (module *eventModule) newbie(newbie coreNewbie) (*Error) {
 
 	//所有库
 	for _,connect := range module.connects {
-		if config,ok := module.router.chunk(newbie.block).(Map); ok {
+		if config,ok := module.router.chunkdata(newbie.block).(Map); ok {
 			name := newbie.block
 			regis := module.registering(config)
 			err := connect.Register(name, regis)
@@ -366,7 +366,7 @@ func (module *eventModule) deniedHandlerActions() ([]Funcing) {
 func (module *eventModule) serve(req *EventRequest, res EventResponse) {
 	ctx := newEventContext(req, res)
 
-	if config,ok := module.router.chunk(ctx.Name).(Map); ok {
+	if config,ok := module.router.chunkdata(ctx.Name).(Map); ok {
 		ctx.Config = config
 	}
 	

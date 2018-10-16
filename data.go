@@ -31,7 +31,7 @@ type (
         Serial(key string) (int64)
 
         //开启手动提交事务模式
-        Begin() (*sql.Tx)
+        Begin() (*sql.Tx, *Error)
         Submit() (*Error)
         Cancel() (*Error)
 	}
@@ -133,7 +133,7 @@ func (module *dataModule) Driver(name string, driver DataDriver, overrides ...bo
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -175,8 +175,7 @@ func (module *dataModule) Table(name string, configs ...Map) (Map) {
 		}
 
     } else {
-        vein := module.table.chunk(name)
-        if vv,ok := vein.(Map); ok {
+        if vv,ok := module.table.chunkdata(name).(Map); ok {
             return vv
         }
     }
@@ -220,8 +219,7 @@ func (module *dataModule) View(name string, configs ...Map) (Map) {
 		}
 
     } else{
-        vein := module.view.chunk(name)
-        if vv,ok := vein.(Map); ok {
+        if vv,ok := module.view.chunkdata(name).(Map); ok {
             return vv
         }
     }
@@ -268,8 +266,7 @@ func (module *dataModule) Model(name string, configs ...Map) (Map) {
 		}
         
     } else {
-        vein := module.model.chunk(name)
-        if vv,ok := vein.(Map); ok {
+        if vv,ok := module.model.chunkdata(name).(Map); ok {
             return vv
         }
     }
@@ -291,18 +288,20 @@ func (module *dataModule) Model(name string, configs ...Map) (Map) {
 //字段定义
 func (module *dataModule) fields(branch string, block string, keys []string, exts ...Map) (Map) {
     m := Map{}
-    if config,ok := kernel.chunk(branch, block).(Map); ok {
-        if fields, ok := config[kFIELDS].(Map); ok {
-            if keys==nil || len(keys) == 0 {
-                for k,v := range fields {
-                    m[k] = v
-                }
-            } else {
-                for _,k := range keys {
-                    if v,ok := fields[k]; ok {
+    if chunk := kernel.chunk(branch, block); chunk != nil {
+        if config,ok := chunk.data.(Map); ok {
+            if fields, ok := config[kFIELDS].(Map); ok {
+                if keys==nil || len(keys) == 0 {
+                    for k,v := range fields {
                         m[k] = v
                     }
-                    
+                } else {
+                    for _,k := range keys {
+                        if v,ok := fields[k]; ok {
+                            m[k] = v
+                        }
+                        
+                    }
                 }
             }
         }
@@ -340,12 +339,14 @@ func (module *dataModule) ModelFields(name string, keys []string, exts ...Map) (
 //枚举定义
 func (module *dataModule) enums(branch, block, field string) (Map) {
     m := Map{}
-    if config,ok := kernel.chunk(branch, block).(Map); ok {
-        if fields, ok := config[kFIELDS].(Map); ok {
-            if field,ok := fields[field].(Map); ok {
-                if enums,ok := field[kENUM].(Map); ok {
-                    for k,v := range enums {
-                        m[k] = v
+    if chunk := kernel.chunk(branch, block); chunk != nil {
+        if config,ok := chunk.data.(Map); ok {
+            if fields, ok := config[kFIELDS].(Map); ok {
+                if field,ok := fields[field].(Map); ok {
+                    if enums,ok := field[kENUM].(Map); ok {
+                        for k,v := range enums {
+                            m[k] = v
+                        }
                     }
                 }
             }
@@ -380,7 +381,7 @@ func (module *dataModule) ModelEnums(name, field string) (Map) {
 
 
 func (module *dataModule) connecting(name string, config DataConfig) (DataConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(DataDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(DataDriver); ok {
         return driver.Connect(name, config)
     }
     panic("[数据]不支持的驱动：" + config.Driver)

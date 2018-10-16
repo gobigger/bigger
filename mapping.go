@@ -32,7 +32,7 @@ func (module *mappingModule) Type(name string, config Map, overrides ...bool) {
         if override {
             module.tttt.chunking(real, config)
         } else {
-            if module.tttt.chunk(real) == nil {
+            if module.tttt.chunkdata(real) == nil {
                 module.tttt.chunking(real, config)
             }
         }
@@ -59,7 +59,7 @@ func (module *mappingModule) Crypto(name string, config Map, overrides ...bool) 
         if override {
             module.crypto.chunking(real, config)
         } else {
-            if module.crypto.chunk(real) == nil {
+            if module.crypto.chunkdata(real) == nil {
                 module.crypto.chunking(real, config)
             }
         }
@@ -85,8 +85,7 @@ func (module *mappingModule) typeDefaultValue(value Any, config Map) Any {
 
 
 func (module *mappingModule) typeValid(name string) (func(Any, Map) bool) {
-	vein := module.tttt.chunk(name)
-	if config,ok := vein.(Map); ok {
+	if config,ok := module.tttt.chunkdata(name).(Map); ok {
 		switch method := config[kVALID].(type) {
         case func(Any,Map) bool:
             return method
@@ -95,8 +94,7 @@ func (module *mappingModule) typeValid(name string) (func(Any, Map) bool) {
     return module.typeDefaultValid
 }
 func (module *mappingModule) typeValue(name string) (func(Any,Map) Any) {
-    vein := module.tttt.chunk(name)
-	if config,ok := vein.(Map); ok {
+	if config,ok := module.tttt.chunkdata(name).(Map); ok {
 		switch method := config[kVALUE].(type) {
         case func(Any,Map) Any:
             return method
@@ -125,8 +123,7 @@ func (module *mappingModule) cryptoDefaultDecode(value Any) Any {
 
 
 func (module *mappingModule) cryptoEncode(name string) (encode func(Any) Any) {
-    vein := module.crypto.chunk(name)
-	if config,ok := vein.(Map); ok {
+	if config,ok := module.crypto.chunkdata(name).(Map); ok {
 		switch method := config[kENCODE].(type) {
         case func(Any) Any:
             return method
@@ -135,8 +132,7 @@ func (module *mappingModule) cryptoEncode(name string) (encode func(Any) Any) {
     return module.cryptoDefaultEncode
 }
 func (module *mappingModule) cryptoDecode(name string) (func(Any) Any) {
-    vein := module.crypto.chunk(name)
-	if config,ok := vein.(Map); ok {
+	if config,ok := module.crypto.chunkdata(name).(Map); ok {
 		switch method := config[kDECODE].(type) {
         case func(Any) Any:
             return method

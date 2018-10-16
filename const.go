@@ -31,7 +31,7 @@ func (module *constModule) Mime(config Map, overrides ...bool) {
 			if override {
 				module.mime.chunking(k, vv)
 			} else {
-				if module.mime.chunk(k) == nil {
+				if module.mime.chunkdata(k) == nil {
 					module.mime.chunking(k, vv)
 				}
 			}
@@ -48,10 +48,10 @@ func (module *constModule) MimeType(name string, defs ...string) string {
 		name = strings.Replace(name,".", "", -1)
 	}
 
-	if vv,ok := module.mime.chunk(name).(string); ok {
+	if vv,ok := module.mime.chunkdata(name).(string); ok {
 		return vv
 	}
-	if vv,ok := module.mime.chunk("*").(string); ok {
+	if vv,ok := module.mime.chunkdata("*").(string); ok {
 		return vv
 	}
 	if len(defs) > 0 {
@@ -65,9 +65,9 @@ func (module *constModule) TypeMime(mime string, defs ...string) string {
         return mime
     }
 	mimes := module.mime.chunks()
-    for k,v := range mimes {
-        if vs,ok := v.(string); ok && vs==mime {
-            return k
+    for _,v := range mimes {
+        if vs,ok := v.data.(string); ok && vs==mime {
+            return v.name
         }
     }
 	if len(defs) > 0 {
@@ -96,7 +96,7 @@ func (module *constModule) Status(config Map, overrides ...bool) {
 			if override {
 				module.status.chunking(k, vv)
 			} else {
-				if module.status.chunk(k) == nil {
+				if module.status.chunkdata(k) == nil {
 					module.status.chunking(k, vv)
 				}
 			}
@@ -104,8 +104,7 @@ func (module *constModule) Status(config Map, overrides ...bool) {
 	}
 }
 func (module *constModule) StatusCode(name string, defs ...int) int {
-	leaf := module.status.chunk(name)
-	if vv,ok := leaf.(int); ok {
+	if vv,ok := module.status.chunkdata(name).(int); ok {
 		return vv
 	}
 	if len(defs) > 0 {
@@ -114,10 +113,10 @@ func (module *constModule) StatusCode(name string, defs ...int) int {
 	return -1
 }
 func (module *constModule) CodeStatus(code int, defs ...string) string {
-	statuss := module.status.chunks()
-    for k,v := range statuss {
-        if vs,ok := v.(int); ok && vs==code {
-            return k
+	statuses := module.status.chunks()
+    for _,v := range statuses {
+        if vs,ok := v.data.(int); ok && vs==code {
+            return v.name
         }
     }
 	if len(defs) > 0 {
@@ -149,7 +148,7 @@ func (module *constModule) Regular(config Map, overrides ...bool) {
 			if override {
 				module.regular.chunking(k, vvs)
 			} else {
-				if module.regular.chunk(k) == nil {
+				if module.regular.chunkdata(k) == nil {
 					module.regular.chunking(k, vvs)
 				}
 			}
@@ -157,10 +156,10 @@ func (module *constModule) Regular(config Map, overrides ...bool) {
 	}
 }
 func (module *constModule) RegularExpress(name string, defs ...string) ([]string) {
-	leaf := module.regular.chunk(name)
-	if vv,ok := leaf.(string); ok {
+	data := module.regular.chunkdata(name)
+	if vv,ok := data.(string); ok {
 		return []string{ vv }
-	} else if vv,ok := leaf.([]string); ok {
+	} else if vv,ok := data.([]string); ok {
 		return vv
 	}
 	return defs
@@ -183,7 +182,7 @@ func (module *constModule) Lang(lang string, config Map, overrides ...bool) {
 			if override {
 				module.lang.chunking(key, vv)
 			} else {
-				if module.lang.chunk(key) == nil {
+				if module.lang.chunkdata(key) == nil {
 					module.lang.chunking(key, vv)
 				}
 			}
@@ -202,9 +201,9 @@ func (module *constModule) LangString(lang, name string, args ...Any) string {
 
 	langStr := ""
 
-	if vv,ok := module.lang.chunk(langKey).(string); ok && vv != "" {
+	if vv,ok := module.lang.chunkdata(langKey).(string); ok && vv != "" {
 		langStr = vv
-	} else if vv,ok := module.lang.chunk(defaultKey).(string); ok && vv != "" {
+	} else if vv,ok := module.lang.chunkdata(defaultKey).(string); ok && vv != "" {
 		langStr = vv
 	} else {
 		langStr = name

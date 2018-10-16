@@ -1,13 +1,22 @@
 
 
 
-global注册  *.index
+db.Begin()
+有个问题，跨service，如果出错，直接return了，那事务就会没有提交也没有取消，
+后续的访问就会出错，应该需要额外处理一下。 比如在数据库出错的时候，自动Cancel一下
+
+
+
+<!-- global注册  *.index
 sys 注册 sys.index
 
 有时候访问sys.index，还是显示全局的
 好像注册的顺序有问题，sys.index没有覆盖*.index中的sys.index
 
 注册时候顺序没有问题， 但是chunks方法拿到的是map，是无序的，core需要加一个数组来保证顺序
+
+chunk处理过了， -->
+
 
 
 

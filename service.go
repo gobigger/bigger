@@ -80,7 +80,7 @@ func (module *serviceModule) Register(name string, config Map, overrides ...bool
 	if override {
 		module.service.chunking(name, config)
 	} else {
-		if module.service.chunk(name) == nil {
+		if module.service.chunkdata(name) == nil {
 			module.service.chunking(name, config)
 		}
 	}
@@ -89,7 +89,7 @@ func (module *serviceModule) Register(name string, config Map, overrides ...bool
 //如果可以人为保证传的值和返回的值是OK的，其实就不需要解析了
 func (module *serviceModule) Invoke(ctx *Context, name string, setting Map, params Map) (Map,*Error) {
 	var config Map
-	if vv,ok := module.service.chunk(name).(Map); ok {
+	if vv,ok := module.service.chunkdata(name).(Map); ok {
 		config = vv
 	}
 

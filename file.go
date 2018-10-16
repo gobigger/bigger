@@ -234,7 +234,7 @@ func (module *fileModule) Driver(name string, driver FileDriver, overrides ...bo
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -254,7 +254,7 @@ func (module *fileModule) Driver(name string, driver FileDriver, overrides ...bo
 
 
 func (module *fileModule) connecting(name string, config FileConfig) (FileConnect, *Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(FileDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(FileDriver); ok {
         return driver.Connect(name, config)
     }
     panic("[文件]不支持的驱动：" + config.Driver)

@@ -90,7 +90,7 @@ func (module *planModule) Driver(name string, driver PlanDriver, overrides ...bo
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -100,7 +100,7 @@ func (module *planModule) Driver(name string, driver PlanDriver, overrides ...bo
 
 //Timer也只是更新times字段，不再单独branch
 func (module *planModule) Timer(name string, times []string, overrides ...bool) {
-	if config,ok := module.router.chunk(name).(Map); ok {
+	if config,ok := module.router.chunkdata(name).(Map); ok {
 		config[kTIMES] = times
 		module.Router(name, config, overrides...)
 	}
@@ -115,7 +115,7 @@ func (module *planModule) Router(name string, config Map, overrides ...bool) {
     if override {
 		module.router.chunking(name, config)
     } else {
-        if module.router.chunk(name) == nil {
+        if module.router.chunkdata(name) == nil {
 			module.router.chunking(name, config)
         }
     }
@@ -129,7 +129,7 @@ func (module *planModule) Filter(name string, config Map, overrides ...bool) {
     if override {
 		module.filter.chunking(name, config)
     } else {
-        if module.filter.chunk(name) == nil {
+        if module.filter.chunkdata(name) == nil {
 			module.filter.chunking(name, config)
         }
     }
@@ -143,7 +143,7 @@ func (module *planModule) Handler(name string, config Map, overrides ...bool) {
     if override {
 		module.handler.chunking(name, config)
     } else {
-        if module.handler.chunk(name) == nil {
+        if module.handler.chunkdata(name) == nil {
 			module.handler.chunking(name, config)
         }
     }
@@ -183,7 +183,7 @@ func (module *planModule) DeferredExecute(name string, delay time.Duration, args
 
 
 func (module *planModule) connecting(config PlanConfig) (PlanConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(PlanDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(PlanDriver); ok {
         return driver.Connect(config)
     }
     panic("[计划]不支持的驱动：" + config.Driver)
@@ -211,18 +211,18 @@ func (module *planModule) initing() {
 
 		//注册队列
 		routers := module.router.chunks()
-		for name,val := range routers {
-			if cfg,ok := val.(Map); ok {
+		for _,val := range routers {
+			if cfg,ok := val.data.(Map); ok {
 
 				regis:= module.registering(cfg)
 
 				//自定义时间在配置文件中
-				if vvs,ok := Bigger.Config.Plan.Timer[name]; ok {
+				if vvs,ok := Bigger.Config.Plan.Timer[val.name]; ok {
 					regis.Times = vvs
 				}
 
 				if len(regis.Times) > 0 {
-					err := connect.Register(name, regis)
+					err := connect.Register(val.name, regis)
 					if err != nil {
 						panic("[计划]注册失败：" + err.Error())
 					}
@@ -276,7 +276,7 @@ func (module *planModule) newbie(newbie coreNewbie) (*Error) {
 		return nil
 	}
 
-	if config,ok := module.router.chunk(newbie.block).(Map); ok {
+	if config,ok := module.router.chunkdata(newbie.block).(Map); ok {
 		name := newbie.block
 		regis := module.registering(config)
 		
@@ -359,7 +359,7 @@ func (module *planModule) serve(req *PlanRequest, res PlanResponse) {
 	ctx := newPlanContext(req, res)
 
 	//判断路由是否存在
-	if config,ok := module.router.chunk(ctx.Name).(Map); ok {	
+	if config,ok := module.router.chunkdata(ctx.Name).(Map); ok {	
 		ctx.Config = config
 	}
 

@@ -60,7 +60,7 @@ func (module *viewModule) Driver(name string, driver ViewDriver, overrides ...bo
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -77,7 +77,7 @@ func (module *viewModule) Helper(name string, config Map, overrides ...bool) {
     if override {
         module.helper.chunking(name, config)
     } else {
-        if module.helper.chunk(name) == nil {
+        if module.helper.chunkdata(name) == nil {
             module.helper.chunking(name, config)
         }
     }
@@ -100,11 +100,11 @@ func (module *viewModule) parse(ctx *Context, body ViewBody) (string,*Error) {
 func (module *viewModule) helperActions() (Map) {
     actions := Map{}
     
-	for kk,vv := range module.helper.chunks() {
-		if config,ok := vv.(Map); ok {
+	for _,vv := range module.helper.chunks() {
+		if config,ok := vv.data.(Map); ok {
 
             if action,ok := config[kACTION]; ok {
-                actions[kk] = action
+                actions[vv.name] = action
             }
 		}
     }
@@ -120,7 +120,7 @@ func (module *viewModule) helperActions() (Map) {
 
 
 func (module *viewModule) connecting(config ViewConfig) (ViewConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(ViewDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(ViewDriver); ok {
         return driver.Connect(config)
     }
     panic("[视图]不支持的驱动：" + config.Driver)

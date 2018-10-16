@@ -52,7 +52,7 @@ func (module *sessionModule) Driver(name string, driver SessionDriver, overrides
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -60,7 +60,7 @@ func (module *sessionModule) Driver(name string, driver SessionDriver, overrides
 
 
 func (module *sessionModule) connecting(config SessionConfig) (SessionConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(SessionDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(SessionDriver); ok {
         return driver.Connect(config)
     }
     panic("[会话]不支持的驱动：" + config.Driver)

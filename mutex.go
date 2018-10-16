@@ -50,7 +50,7 @@ func (module *mutexModule) Driver(name string, driver MutexDriver, overrides ...
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -58,7 +58,7 @@ func (module *mutexModule) Driver(name string, driver MutexDriver, overrides ...
 
 
 func (module *mutexModule) connecting(config MutexConfig) (MutexConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(MutexDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(MutexDriver); ok {
         return driver.Connect(config)
     }
     panic("[互斥]不支持的驱动：" + config.Driver)

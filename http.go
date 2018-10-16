@@ -177,13 +177,28 @@ func (module *httpModule) Driver(name string, driver HttpDriver, overrides ...bo
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
 }
 
 
+
+
+//因为router.key要返回，所以不能用数组
+func (module *httpModule) Routers(sites ...string) (Map) {
+	prefixs := []string{}
+	if len(sites) > 0 {
+		prefixs = append(prefixs, sites[0] + ".")
+	}
+	chunks := module.router.chunks(prefixs...)
+	routers := Map{}
+	for _,chunk := range chunks {
+		routers[chunk.name] = chunk.data
+	}
+	return routers
+}
 func (module *httpModule) Router(name string, config Map, overrides ...bool) {
 
     override := true
@@ -291,7 +306,7 @@ func (module *httpModule) Router(name string, config Map, overrides ...bool) {
 		if override {
 			module.router.chunking(k, v)
 		} else {
-			if module.router.chunk(k) == nil {
+			if module.router.chunkdata(k) == nil {
 				module.router.chunking(k, v)
 			}
 		}
@@ -331,7 +346,7 @@ func (module *httpModule) Filter(name string, config Map, overrides ...bool) {
 		if override {
 			module.filter.chunking(k, v)
 		} else {
-			if module.filter.chunk(k) == nil {
+			if module.filter.chunkdata(k) == nil {
 				module.filter.chunking(k, v)
 			}
 		}
@@ -371,7 +386,7 @@ func (module *httpModule) Handler(name string, config Map, overrides ...bool) {
 		if override {
 			module.handler.chunking(k, v)
 		} else {
-			if module.handler.chunk(k) == nil {
+			if module.handler.chunkdata(k) == nil {
 				module.handler.chunking(k, v)
 			}
 		}
@@ -386,7 +401,7 @@ func (module *httpModule) Handler(name string, config Map, overrides ...bool) {
 
 
 func (module *httpModule) connecting(config HttpConfig) (HttpConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(HttpDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(HttpDriver); ok {
         return driver.Connect(config)
     }
     panic("[HTTP]不支持的驱动：" + config.Driver)
@@ -412,10 +427,10 @@ func (module *httpModule) initing() {
 
 		//注册路由
 		locals := module.router.chunks(fmt.Sprintf("%s.", site))
-		for k,v := range locals {
-			if vv,ok := v.(Map); ok {
+		for _,v := range locals {
+			if vv,ok := v.data.(Map); ok {
 				regis := module.registering(site, vv)
-				err := connect.Register(k, regis)
+				err := connect.Register(v.name, regis)
 				if err != nil {
 					panic("[HTTP]注册失败：" + err.Error())
 				}
@@ -485,7 +500,7 @@ func (module *httpModule) newbie(newbie coreNewbie) (*Error) {
 	keys := strings.Split(newbie.block, ".")
 	site := keys[0]
 
-	if config,ok := module.router.chunk(newbie.block).(Map); ok {
+	if config,ok := module.router.chunkdata(newbie.block).(Map); ok {
 		name := newbie.block
 		regis := module.registering(site, config)
 		err := module.connect.Register(name, regis)
@@ -541,7 +556,7 @@ func (module *httpModule) deniedHandlerActions(site string) ([]Funcing) {
 func (module *httpModule) serve(req *HttpRequest, res HttpResponse) {
 
 	ctx := newHttpContext(req, res)
-	if config,ok := module.router.chunk(ctx.Name).(Map); ok {
+	if config,ok := module.router.chunkdata(ctx.Name).(Map); ok {
 		ctx.Config = config
 	}
 

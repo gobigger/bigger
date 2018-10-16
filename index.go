@@ -72,6 +72,7 @@ func init() {
 func initCore() {
 	kernel = &coreKernel{
         blocks:	make(map[string]*coreBlock, 0),
+        indexs: make([]*coreBlock, 0),
         newbies: make([]coreNewbie, 0),
 	}
 }

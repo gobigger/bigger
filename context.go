@@ -1533,9 +1533,9 @@ func (url *contextUrl) Route(name string, values ...Map) string {
 	var config Map
 
 	//搜索定义
-	if vv,ok := mHTTP.router.chunk(name).(Map); ok {
+	if vv,ok := mHTTP.router.chunkdata(name).(Map); ok {
 		config = vv
-	} else if vv,ok := mHTTP.router.chunk(nameget).(Map); ok {
+	} else if vv,ok := mHTTP.router.chunkdata(nameget).(Map); ok {
 		config = vv
 	} else {
 		//没有找到路由定义

@@ -54,7 +54,7 @@ func (module *loggerModule) Driver(name string, driver LoggerDriver, overrides .
     if override {
         module.driver.chunking(name, driver)
     } else {
-        if module.driver.chunk(name) == nil {
+        if module.driver.chunkdata(name) == nil {
             module.driver.chunking(name, driver)
         }
     }
@@ -65,7 +65,7 @@ func (module *loggerModule) Driver(name string, driver LoggerDriver, overrides .
 
 
 func (module *loggerModule) connecting(config LoggerConfig) (LoggerConnect,*Error) {
-    if driver,ok := module.driver.chunk(config.Driver).(LoggerDriver); ok {
+    if driver,ok := module.driver.chunkdata(config.Driver).(LoggerDriver); ok {
         return driver.Connect(config)
     }
     panic("[日志]不支持的驱动：" + config.Driver)
