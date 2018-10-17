@@ -1394,6 +1394,42 @@ func (module *httpModule) bodyView(ctx *Context, body httpViewBody) {
 			}
 			return fmt.Sprintf(format, args...)
 		},
+
+
+		"signed": func(key string) bool {
+			return ctx.Signed(key)
+		},
+		"signal": func(key string) Any {
+			return ctx.Signal(key)
+		},
+		"signer": func(key string) Any {
+			return ctx.Signer(key)
+		},
+		"lang": func() string {
+			return ctx.Lang
+		},
+		"zone": func() *time.Location {
+			return ctx.Zone
+		},
+		"string": func(key string, args ...Any) string {
+			return ctx.String(key, args...)
+		},
+		"enum": func(name, field string,v Any) (string) {
+			value := fmt.Sprintf("%v", v)
+			//多语言支持
+			//key=enum.name.file.value
+			langkey := fmt.Sprintf("enum.%s.%s.%s", name, field, value)
+			langval := ctx.String(langkey)
+			if langkey != langval {
+				return langval
+			} else {
+				enums := Bigger.Enums(name, field)
+				if vv,ok := enums[value].(string); ok {
+					return vv
+				}
+				return value
+			}
+		},
 	}
 
 	vhelpers := mVIEW.helperActions()
