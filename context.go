@@ -517,8 +517,9 @@ func (ctx *Context) authHandler() *Error {
 					db := ctx.dataBase(base)
 					id := ctx.Signal(authSign)
 					item := db.Table(table).Entity(id)
+
 					if item == nil {
-						if ohNo && authMust {
+						if authMust {
 							if vv,ok := authConfig[kERROR].(*Error); ok {
 								return vv
 							} else {
@@ -529,7 +530,6 @@ func (ctx *Context) authHandler() *Error {
 								return newError(errKey, authKey)
 							}
 						}
-
 					} else {
 						saveMap[authKey] = item
 					}
@@ -559,6 +559,8 @@ func (ctx *Context) authHandler() *Error {
 			ctx.Auth[k] = v
 		}
 	}
+
+	
 
 	return nil
 }
@@ -704,26 +706,31 @@ func (ctx *Context) Signed(key string) (bool) {
 func (ctx *Context) Signin(key string, id,name Any) {
 	key = ctx.signKey(key)
 	ctx.Session[key] = Map{
-		kID: id, kNAME: name,
+		kID: fmt.Sprintf("%v", id),
+		kNAME: fmt.Sprintf("%v", name),
 	}
 }
 func (ctx *Context) Signout(key string) {
 	key = ctx.signKey(key)
 	delete(ctx.Session, key)
 }
-func (ctx *Context) Signal(key string) Any {
+func (ctx *Context) Signal(key string) string {
 	key = ctx.signKey(key)
 	if vv,ok := ctx.Session[key].(Map); ok {
-		return vv[kID]
+		if id,ok := vv[kID].(string); ok {
+			return id
+		}
 	}
-	return nil
+	return ""
 }
-func (ctx *Context) Signer(key string) Any {
+func (ctx *Context) Signer(key string) string {
 	key = ctx.signKey(key)
 	if vv,ok := ctx.Session[key].(Map); ok {
-		return vv[kNAME]
+		if id,ok := vv[kNAME].(string); ok {
+			return id
+		}
 	}
-	return nil
+	return ""
 }
 
 //----------------------- 签名系统 end ---------------------------------

@@ -1399,10 +1399,10 @@ func (module *httpModule) bodyView(ctx *Context, body httpViewBody) {
 		"signed": func(key string) bool {
 			return ctx.Signed(key)
 		},
-		"signal": func(key string) Any {
+		"signal": func(key string) string {
 			return ctx.Signal(key)
 		},
-		"signer": func(key string) Any {
+		"signer": func(key string) string {
 			return ctx.Signer(key)
 		},
 		"lang": func() string {
