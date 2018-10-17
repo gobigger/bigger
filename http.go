@@ -187,15 +187,15 @@ func (module *httpModule) Driver(name string, driver HttpDriver, overrides ...bo
 
 
 //因为router.key要返回，所以不能用数组
-func (module *httpModule) Routers(sites ...string) (Map) {
+func (module *httpModule) Routers(sites ...string) ([]KVPair) {
 	prefixs := []string{}
 	if len(sites) > 0 {
 		prefixs = append(prefixs, sites[0] + ".")
 	}
 	chunks := module.router.chunks(prefixs...)
-	routers := Map{}
+	routers := []KVPair{}
 	for _,chunk := range chunks {
-		routers[chunk.name] = chunk.data
+		routers = append(routers, KVPair{chunk.name, chunk.data})
 	}
 	return routers
 }
@@ -1369,6 +1369,12 @@ func (module *httpModule) bodyView(ctx *Context, body httpViewBody) {
 			return ctx.Url.Site(name, path)
 		},
 
+		"lang": func() string {
+			return ctx.Lang
+		},
+		"zone": func() *time.Location {
+			return ctx.Zone
+		},
 		"timezone": func() (string) {
 			return ctx.String(ctx.Zone.String())
 		},
@@ -1404,12 +1410,6 @@ func (module *httpModule) bodyView(ctx *Context, body httpViewBody) {
 		},
 		"signer": func(key string) string {
 			return ctx.Signer(key)
-		},
-		"lang": func() string {
-			return ctx.Lang
-		},
-		"zone": func() *time.Location {
-			return ctx.Zone
 		},
 		"string": func(key string, args ...Any) string {
 			return ctx.String(key, args...)

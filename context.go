@@ -1480,6 +1480,11 @@ func (ctx *Context) Ip() string {
 
 //可否智能判断是否跨站返回URL
 func (url *contextUrl) Route(name string, values ...Map) string {
+
+	if strings.HasPrefix(name, "http://") || strings.HasPrefix(name, "https://") ||
+	strings.HasPrefix(name, "ws://") || strings.HasPrefix(name, "wss://") {
+		return name
+	}
 	
 	//当前站点
 	currSite := ""

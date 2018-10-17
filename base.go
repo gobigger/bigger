@@ -7,6 +7,12 @@ type (
 	env = int
 	mod	= int
 )
+type (
+	KVPair struct {
+		Key	string
+		Val	Any
+	}
+)
 
 const (
     _ env = iota

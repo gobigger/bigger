@@ -574,7 +574,7 @@ func (bigger *bigger) Site(name string, roots ...string) (*httpGroup) {
 func (bigger *bigger) Router(name string, config Map, overrides ...bool) {
     mHTTP.Router(name, config, overrides...)
 }
-func (bigger *bigger) Routers(sites ...string) (Map) {
+func (bigger *bigger) Routers(sites ...string) ([]KVPair) {
     return mHTTP.Routers(sites...)
 }
 func (bigger *bigger) Filter(name string, config Map, overrides ...bool) {
