@@ -1542,12 +1542,15 @@ func (url *contextUrl) Route(name string, values ...Map) string {
 	
 	
 	nameget := fmt.Sprintf("%s.get", name)
+	namepost := fmt.Sprintf("%s.post", name)
 	var config Map
 
 	//搜索定义
 	if vv,ok := mHTTP.router.chunkdata(name).(Map); ok {
 		config = vv
 	} else if vv,ok := mHTTP.router.chunkdata(nameget).(Map); ok {
+		config = vv
+	} else if vv,ok := mHTTP.router.chunkdata(namepost).(Map); ok {
 		config = vv
 	} else {
 		//没有找到路由定义
