@@ -181,3 +181,18 @@ type (
 
 )
 
+func (config *configConfig) Langs(extens ...Map) Map {
+    langs := Map{}
+
+    for k,v := range config.Lang {
+        langs[k] = v.Name
+    }
+
+    if len(extens) > 0 {
+        for k,v := range extens[0] {
+            langs[k] = v
+        }
+    }
+
+    return langs
+}
