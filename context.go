@@ -643,7 +643,7 @@ func (ctx *Context) itemHandler() (*Error) {
 						//要查询库
 						db := ctx.dataBase(base)
 						item := db.Table(table).Entity(realVal)
-						if ctx.Erred() != nil && must {
+						if must && (ctx.Erred() != nil || item == nil) {
 							if vv,ok := config[kERROR].(*Error); ok {
 								return vv
 							} else {
