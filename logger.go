@@ -104,6 +104,21 @@ func (module *loggerModule) exiting() {
 
 
 
+func (module *loggerModule) output(body string, args ...Any) {
+    module.Info(body, args...)
+    if Bigger.Config.Logger.Console == false {
+        args2 := []Any{
+            time.Now().Format("2006-01-02 15:04:05"),
+        }
+        if len(args)>0 && strings.Count(body, "%")==len(args) {
+            args2 = append(args2, fmt.Sprintf(body, args...))
+        } else {
+            args2 = append(args2, body)
+            args2 = append(args2, args...)
+        }
+        fmt.Println(args2...)
+    }
+}
 
 //调试
 func (module *loggerModule) Debug(body string, args ...Any) {
@@ -130,7 +145,7 @@ func (module *loggerModule) Trace(body string, args ...Any) {
         go module.connect.Trace(body, args...)
     } else {
         args2 := []Any{
-            time.Now().Format("2006/01/02 15:04:05"),
+            time.Now().Format("2006-01-02 15:04:05"),
         }
 
         if len(args)>0 && strings.Count(body, "%")==len(args) {
@@ -149,7 +164,7 @@ func (module *loggerModule) Info(body string, args ...Any) {
         go module.connect.Info(body, args...)
     } else {
         args2 := []Any{
-            time.Now().Format("2006/01/02 15:04:05"),
+            time.Now().Format("2006-01-02 15:04:05"),
         }
 
         if len(args)>0 && strings.Count(body, "%")==len(args) {
@@ -168,7 +183,7 @@ func (module *loggerModule) Warning(body string, args ...Any) {
         go module.connect.Warning(body, args...)
     } else {
         args2 := []Any{
-            time.Now().Format("2006/01/02 15:04:05"),
+            time.Now().Format("2006-01-02 15:04:05"),
         }
 
         if len(args)>0 && strings.Count(body, "%")==len(args) {
@@ -187,7 +202,7 @@ func (module *loggerModule) Error(body string, args ...Any) {
         go module.connect.Error(body, args...)
     } else {
         args2 := []Any{
-            time.Now().Format("2006/01/02 15:04:05"),
+            time.Now().Format("2006-01-02 15:04:05"),
         }
 
         if len(args)>0 && strings.Count(body, "%")==len(args) {

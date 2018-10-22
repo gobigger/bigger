@@ -9,18 +9,18 @@ import (
 	"errors"
 	"net"
 	"os"
-	"strconv"
+	// "strconv"
 	"sync/atomic"
 	"time"
 )
 
 const (
-	//StartTimeEnvName is the env key for ID generating start time
-	StartTimeEnvName = "FASTID_START_TIME"
-	//MachineIDEnvName is the env key for machine id
-	MachineIDEnvName           = "FASTID_MACHINE_ID"
-	defaultStartTimeStr        = "2018-09-01T00:00:00.000Z"
-	defaultStartTimeNano int64 = 1535760000000000000
+	// //StartTimeEnvName is the env key for ID generating start time
+	// StartTimeEnvName = "FASTID_START_TIME"
+	// //MachineIDEnvName is the env key for machine id
+	// MachineIDEnvName           = "FASTID_MACHINE_ID"
+	// defaultStartTimeStr        = "2018-09-01T00:00:00.000Z"
+	// defaultStartTimeNano int64 = 1535760000000000000
 
 	// defaultStartTimeStr        = "2018-06-01T00:00:00.000Z"
 	// defaultStartTimeNano int64 = 1527811200000000000
@@ -28,6 +28,7 @@ const (
 
 // maintains the settings for id generating
 type FastID struct {
+	timeStart	  int64
 	timeBits      uint
 	seqBits       uint
 	machineBits   uint
@@ -38,14 +39,16 @@ type FastID struct {
 	lastID        int64
 }
 
-func NewFastID(node int64) *FastID {
-	return NewFastIDWithConfig(40, 8, 15, node)
-}
+// func NewFastID(node int64) *FastID {
+// 	//45bit有1000多年，6bit共64个点节，12bit每毫秒4096个
+// 	return NewFastIDWithConfig(45, 6, 12, node)
+// }
 
 //NewFastIDWithConfig creates an config with machine id, in case you don't want to use the lower 16 bits of the IP address.
-func NewFastIDWithConfig(timeBits, machineBits, seqBits uint, machineID int64) *FastID {
+func NewFastIDWithConfig(timeBits, machineBits, seqBits uint, timeStart, machineID int64) *FastID {
 	machineIDMask := ^(int64(-1) << machineBits)
 	return &FastID{
+		timeStart:		timeStart,
 		timeBits:      timeBits,
 		seqBits:       seqBits,
 		machineBits:   machineBits,
@@ -56,6 +59,9 @@ func NewFastIDWithConfig(timeBits, machineBits, seqBits uint, machineID int64) *
 		lastID:        0,
 	}
 }
+
+//48bits 时间戳，可以表示大概8000多年
+//45bits 大概就可以1000多年
 
 // BenchmarkConfig is a high performance setting for benchmark
 //  40 bits timestamp
@@ -69,11 +75,11 @@ func NewFastIDWithConfig(timeBits, machineBits, seqBits uint, machineID int64) *
 //  7  bits seq
 // var CommonConfig = ConstructConfig(40, 7, 16)
 
-var startEpochNano = getStartEpochFromEnv()
+// var startEpochNano = getStartEpochFromEnv()
 
 func (c *FastID) getCurrentTimestamp() int64 {
 	//devided by 2^20 (~10^6, nano to milliseconds)
-	return (time.Now().UnixNano() - startEpochNano) >> 20 & c.timeMask
+	return (time.Now().UnixNano() - c.timeStart) >> 20 & c.timeMask	//startEpochNano
 }
 
 //NextID generates unique int64 IDs with the setting in the methond owner
@@ -118,11 +124,11 @@ func (c *FastID) GetTime(id int64) int64 {
 
 func getMachineID() int64 {
 	//getting machine from env
-	if machineIDStr, ok := os.LookupEnv(MachineIDEnvName); ok {
-		if machineID, err := strconv.ParseInt(machineIDStr, 10, 64); err == nil {
-			return machineID
-		}
-	}
+	// if machineIDStr, ok := os.LookupEnv(MachineIDEnvName); ok {
+	// 	if machineID, err := strconv.ParseInt(machineIDStr, 10, 64); err == nil {
+	// 		return machineID
+	// 	}
+	// }
 	//take the lower 16bits of IP address as Machine ID
 	if ip, err := getIP(); err == nil {
 		return (int64(ip[2]) << 8) + int64(ip[3])
@@ -130,16 +136,16 @@ func getMachineID() int64 {
 	return 0
 }
 
-func getStartEpochFromEnv() int64 {
-	startTimeStr := getEnv(StartTimeEnvName, defaultStartTimeStr)
-	var startEpochTime, err = time.Parse(time.RFC3339, startTimeStr)
+// func getStartEpochFromEnv() int64 {
+// 	startTimeStr := getEnv(StartTimeEnvName, defaultStartTimeStr)
+// 	var startEpochTime, err = time.Parse(time.RFC3339, startTimeStr)
 
-	if err == nil {
-		return defaultStartTimeNano
-	}
+// 	if err == nil {
+// 		return defaultStartTimeNano
+// 	}
 
-	return startEpochTime.UnixNano()
-}
+// 	return startEpochTime.UnixNano()
+// }
 
 func getIP() (net.IP, error) {
 	if addrs, err := net.InterfaceAddrs(); err == nil {

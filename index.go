@@ -2,6 +2,7 @@ package bigger
 
 
 import (
+	"time"
     "plugin"
     "os"
     "fmt"
@@ -41,10 +42,10 @@ var (
 
 func init() {
 	initCore()
+    initConfig()
+
     initBigger()
     initLogger()
-
-    initConfig()
 
 	initConst()
     initMapping()
@@ -74,43 +75,18 @@ func initCore() {
         blocks:	make(map[string]*coreBlock, 0),
         indexs: make([]*coreBlock, 0),
         newbies: make([]coreNewbie, 0),
-	}
-}
-
-
-
-func initBigger() {
+    }
+    
 	Bigger = &bigger{
         Mode:           Developing,
         plugins:        map[string]*plugin.Plugin{},
         hosts:          make(map[string]string),
         url:            &contextUrl{},
     }
-
-    Bigger.fastid = fastid.NewFastID(Bigger.Id)
-
-    Bigger.textCoder = base64.NewEncoding(encodeTextAlphabet)
-
-	hd := hashid.NewData()
-	hd.Alphabet = encodeDigitAlphabet
-	hd.Salt = encodeDigitSalt
-    if encodeDigitLength > 0 {
-        hd.MinLength = encodeDigitLength
-    } 
-    coder,err := hashid.NewWithData(hd)
-    if err == nil {
-        Bigger.digitCoder = coder
-    }
-
 }
 
 
 
-func initLogger() {
-    mLOGGER = &loggerModule{
-        driver:  coreBranch{kernel, bLoggerDriver},
-    }
-}
 
 
 //加载配置
@@ -149,8 +125,25 @@ func initConfig() {
     Bigger.Id = config.Node.Id
     Bigger.Name = config.Node.Name
 
-
-    
+    if config.serial.Start == "" {
+        t,e := time.Parse("2006-01-02", config.serial.Start)
+        if e == nil {
+            config.serial.begin = t.UnixNano()
+        } else {
+            config.serial.begin = time.Date(2018, 10, 1, 0, 0, 0, 0, time.Local).UnixNano()
+        }
+    } else {
+        config.serial.begin = time.Date(2018, 10, 1, 0, 0, 0, 0, time.Local).UnixNano()
+    }
+    if config.serial.Time <= 0 {
+        config.serial.Time = 43
+    }
+    if config.serial.Node <= 0 {
+        config.serial.Node = 7
+    }
+    if config.serial.Seq <= 0 {
+        config.serial.Seq = 13
+    }
 
 
     //默认logger驱动
@@ -414,6 +407,37 @@ func loadConfig() (*configConfig,error){
 
     return &config,nil
 }
+
+
+
+
+func initBigger() {
+
+    Bigger.fastid = fastid.NewFastIDWithConfig(Bigger.Config.serial.Time, Bigger.Config.serial.Node, Bigger.Config.serial.Seq, Bigger.Config.serial.begin, Bigger.Id)
+
+    Bigger.textCoder = base64.NewEncoding(encodeTextAlphabet)
+
+	hd := hashid.NewData()
+	hd.Alphabet = encodeDigitAlphabet
+	hd.Salt = encodeDigitSalt
+    if encodeDigitLength > 0 {
+        hd.MinLength = encodeDigitLength
+    } 
+    coder,err := hashid.NewWithData(hd)
+    if err == nil {
+        Bigger.digitCoder = coder
+    }
+
+}
+
+
+
+func initLogger() {
+    mLOGGER = &loggerModule{
+        driver:  coreBranch{kernel, bLoggerDriver},
+    }
+}
+
 
 
 

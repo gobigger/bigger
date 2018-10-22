@@ -77,8 +77,8 @@ func (bigger *bigger) initing() {
     mSOCKET.initing()
     mVIEW.initing()
 
-    bigger.Info("bigger raft is binding on", bigger.Config.Node.Bind)
-    Bigger.Info("bigger http is running at", bigger.Config.Node.Port)
+    mLOGGER.output("bigger raft is binding on", bigger.Config.Node.Bind)
+    mLOGGER.output("bigger http is running at", bigger.Config.Node.Port)
     
     //开始触发器
     bigger.SyncTrigger(EventBiggerStart, Map{})
@@ -91,7 +91,7 @@ func (bigger *bigger) exiting() {
         return
     }
     
-    Bigger.Info("bigger end")
+    mLOGGER.output("bigger end")
 
     //结束触发器
     bigger.SyncTrigger(EventBiggerEnd, Map{})
@@ -822,7 +822,7 @@ func (bigger *bigger) Serial() int64 {
 func (bigger *bigger) Unique(prefixs ...string) string {
     id := bigger.fastid.NextID()
     if len(prefixs) > 0 {
-        return fmt.Sprintf("%s%d", prefixs[0], id)
+        return fmt.Sprintf("%s%s", prefixs[0], bigger.Enhash(id))
     } else {
         return bigger.Enhash(id)
     }

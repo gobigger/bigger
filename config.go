@@ -1,5 +1,8 @@
 package bigger
 
+import (
+)
+
 
 
 type (
@@ -12,6 +15,7 @@ type (
         Domain	string	`toml:"domain"`
         
         Node    nodeConfig              `toml:"node"`
+        serial  serialConfig            `toml:"serial"`
 
         Lang	map[string]langConfig   `toml:"lang"`
         
@@ -44,6 +48,13 @@ type (
         Bind    string  `toml:"bind"`
         Join    string  `toml:"join"`
         Port    int     `toml:"port"`
+    }
+    serialConfig struct {
+        begin   int64
+        Start   string      `toml:"start"`
+        Time    uint        `toml:"time"`
+        Node    uint        `toml:"node"`
+        Seq     uint        `toml:"seq"`
     }
 
 
