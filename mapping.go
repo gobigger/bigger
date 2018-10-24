@@ -397,22 +397,19 @@ func (module *mappingModule) Parse(config Map, data Map, value Map, argn bool, p
                     //主要是在route的时候，其它的时候还ok，所以要在encode/decode中做类型判断解还是不解
 
                     //而且要值是string类型
-                    if sv,ok := fieldValue.(string); ok {
+                    // if sv,ok := fieldValue.(string); ok {
 
                         //得到解密方法
                         decode := module.cryptoDecode(ct)
-                        decodeValue := decode(sv)
-
-                        //不相等，才是解过密
-                        if decodeValue != sv {
+                        if val := decode(fieldValue); val != nil {
                             //前方解过密了，表示该参数，不再加密
                             //因为加密解密，只有一个2选1的
                             //比如 args 只需要解密 data 只需要加密
                             //route 的时候 args 需要加密，而不用再解，所以是单次的
-                            fieldValue = decodeValue
+                            fieldValue = val
                             decoded = true
                         }
-                    }
+                    // }
                 }
 
 
@@ -562,19 +559,14 @@ func (module *mappingModule) Parse(config Map, data Map, value Map, argn bool, p
 
 
         // 跳过且为空时，不写值
-        if pass && passEmpty {
+        if pass && (passEmpty || passError) {
         } else {
 
-            // 跳过但错误时，不编码
-            if  pass && passError  {
-
-            } else {
-
-                //当pass=true的时候， 这里可能会是空值，那应该跳过
+            //当pass=true的时候， 这里可能会是空值，那应该跳过
                 //最后，值要不要加密什么的
                 //如果加密
                 //encode
-                if ct,ok := fieldConfig[kENCODE].(string); ok && decoded == false && passEmpty == false && passError == false {
+            if ct,ok := fieldConfig[kENCODE].(string); ok && decoded == false && passEmpty == false && passError == false {
 
                     /*
                     //全都转成字串再加密
@@ -582,17 +574,15 @@ func (module *mappingModule) Parse(config Map, data Map, value Map, argn bool, p
                     //不用转了，因为hashid这样的加密就要int64
                     */
 
-                    //得到解密方法
                     encode := module.cryptoEncode(ct)
-                    fieldValue = encode(fieldValue)
-                }
-
-
+                    if val := encode(fieldValue); val != nil {
+                        fieldValue = val
+                    }
             }
-
-            //没有JSON要处理，所以给值
-            value[fieldName] = fieldValue
         }
+
+        //没有JSON要处理，所以给值
+        value[fieldName] = fieldValue
 
     }
     return nil

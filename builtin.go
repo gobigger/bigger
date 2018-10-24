@@ -20,7 +20,7 @@ func (bigger *bigger) builtin() {
 			if vv,ok := value.([]string); ok {
 				return Bigger.Encrypts(vv)
 			}
-            return value
+            return nil
 		},
 		"decode": func(value Any) Any {
 			text := Bigger.ToString(value)
@@ -36,13 +36,13 @@ func (bigger *bigger) builtin() {
 			if vv,ok := value.(int64); ok {
 				return Bigger.Enhash(vv)
 			}
-			return value
+			return nil
 		},
 		"decode": func(value Any) Any {
 			if vv,ok := value.(string); ok {
 				return Bigger.Dehash(vv)
 			}
-			return value
+			return nil
 		},
 	})
 
@@ -52,13 +52,13 @@ func (bigger *bigger) builtin() {
 			if vv,ok := value.([]int64); ok {
 				return Bigger.Enhashs(vv)
             }
-            return value
+            return nil
         },
 		"decode": func(value Any) Any {
 			if vv,ok := value.(string); ok {
 				return Bigger.Dehashs(vv)
 			}
-			return value
+			return nil
 		},
 	})
 

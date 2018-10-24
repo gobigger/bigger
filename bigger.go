@@ -889,3 +889,12 @@ func (bigger *bigger) Round(val float64, precisions ...int) float64 {
 
     return val
 }
+// //百分比处理
+// func (bigger *bigger) Percents(args Map, keys ...string) Map {
+//     for _,key := range keys {
+//         if vv,ok := args[key].(float64); ok {
+//             args[key] = vv/100
+//         }
+//     }
+//     return args
+// }
