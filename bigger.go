@@ -867,3 +867,25 @@ func (bigger *bigger) Define(tttt string, must bool, name string, exts ...Map) M
 
     return config
 }
+
+
+
+//GO的四舍六入，银行家舍入法
+func (bigger *bigger) Round(val float64, precisions ...int) float64 {
+
+    precision := 2
+    if len(precisions) > 0 {
+        precision = precisions[0]
+    }
+
+    if precision > 0 {
+        format := fmt.Sprintf("%%0.%vf", precision)
+        sv := fmt.Sprintf(format, val)
+        nv,ee := strconv.ParseFloat(sv, 10)
+        if ee == nil {
+            return nv
+        }
+    }
+
+    return val
+}
