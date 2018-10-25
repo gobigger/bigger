@@ -291,7 +291,9 @@ func (module *dataModule) fields(branch string, block string, keys []string, ext
     if chunk := kernel.chunk(branch, block); chunk != nil {
         if config,ok := chunk.data.(Map); ok {
             if fields, ok := config[kFIELDS].(Map); ok {
-                if keys==nil || len(keys) == 0 {
+                // if keys==nil || len(keys) == 0 {
+                //空数组一个也不返
+                if keys==nil {
                     for k,v := range fields {
                         m[k] = v
                     }

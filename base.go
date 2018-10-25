@@ -123,6 +123,7 @@ const (
 	kTYPES		= "types"
 	kVALID		= "valid"
 	kVALUE		= "value"
+	kVAL		= "val"
 	kDECODE		= "decode"
 	kENCODE		= "encode"
 	kAUTO		= "auto"

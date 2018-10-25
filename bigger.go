@@ -440,6 +440,15 @@ func (bigger *bigger) Fields(name string, keys []string, exts ...Map) (Map) {
 func (bigger *bigger) Enums(name string, field string) (Map) {
     return mDATA.Enums(name, field)
 }
+func (bigger *bigger) Enum(name, field, key string) (string) {
+    enums := mDATA.Enums(name, field)
+
+    if vv,ok := enums[key].(string); ok {
+        return vv
+    }
+
+    return key
+}
 func (bigger *bigger) Query(args ...Any) (string,[]Any,string,*Error) {
     return mDATA.Parse(args...)
 }
