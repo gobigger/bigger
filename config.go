@@ -179,7 +179,7 @@ type (
     }
 
     PathConfig struct {
-        Node        string    `toml:"node"`
+        Store       string   `toml:"store"`
         Lang        string    `toml:"lang"`
         View        string    `toml:"view"`
         Static      string    `toml:"static"`

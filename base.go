@@ -117,7 +117,7 @@ const (
 	
 
 
-	kDEFAULT	= "default"
+	DEFAULT	= "default"
 	kBUFFER		= "buffer"
 	kTYPE		= "type"
 	kTYPES		= "types"

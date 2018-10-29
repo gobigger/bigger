@@ -183,7 +183,7 @@ func (module *socketModule) Command(name string, config Map, overrides ...bool) 
 
 
 func (module *socketModule) Assign(flag, rand string, bases ...string) (string) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(rand); node != "" {
@@ -334,7 +334,7 @@ func (module *socketModule) DeferredMessage(code string, cmd string, delay time.
 }
 
 func (module *socketModule) Broadcast(channel string, command string, value Map, bases ...string) (*Error) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(channel); node != "" {
@@ -383,7 +383,7 @@ func (module *socketModule) Broadcast(channel string, command string, value Map,
 	}
 }
 func (module *socketModule) DeferredBroadcast(channel string, command string, delay time.Duration, value Map, bases ...string) *Error {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(channel); node != "" {

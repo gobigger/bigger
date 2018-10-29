@@ -132,7 +132,7 @@ func newContext() *Context {
 	}
 
 	ctx.Charset = vUTF8
-	ctx.Lang = kDEFAULT
+	ctx.Lang = DEFAULT
 	ctx.Zone = time.Local
 
 	return ctx
@@ -155,7 +155,7 @@ func newPlanContext(req *PlanRequest, res PlanResponse) *Context {
 	}
 
 	ctx.Charset = vUTF8
-	ctx.Lang = kDEFAULT
+	ctx.Lang = DEFAULT
 	ctx.Zone = time.Local
 
 	return ctx
@@ -177,7 +177,7 @@ func newEventContext(req *EventRequest, res EventResponse) *Context {
 	}
 
 	ctx.Charset = vUTF8
-	ctx.Lang = kDEFAULT
+	ctx.Lang = DEFAULT
 	ctx.Zone = time.Local
 
 	return ctx
@@ -199,7 +199,7 @@ func newQueueContext(req *QueueRequest, res QueueResponse) *Context {
 	}
 
 	ctx.Charset = vUTF8
-	ctx.Lang = kDEFAULT
+	ctx.Lang = DEFAULT
 	ctx.Zone = time.Local
 
 	return ctx
@@ -221,7 +221,7 @@ func newHttpContext(req *HttpRequest, res HttpResponse) *Context {
 	ctx.Site = req.Site
 
 	ctx.Charset = vUTF8
-	ctx.Lang = kDEFAULT
+	ctx.Lang = DEFAULT
 	ctx.Zone = time.Local
 
 	ctx.Url = &contextUrl{
@@ -294,7 +294,7 @@ func newSocketContext(req *SocketRequest, res SocketResponse) *Context {
 	}
 
 	ctx.Charset = vUTF8
-	ctx.Lang = kDEFAULT
+	ctx.Lang = DEFAULT
 	ctx.Zone = time.Local
 
 	return ctx
@@ -360,7 +360,7 @@ func (ctx *Context) Next() {
 //以保证同一个上下文，使用同一个数据连接，不多开
 //ctx下禁止直接访问数据，只允许在服务里调用
 func (ctx *Context) fileBase(bases ...string) (FileBase) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else {
@@ -376,7 +376,7 @@ func (ctx *Context) fileBase(bases ...string) (FileBase) {
 	return ctx.filebases[base]
 }
 func (ctx *Context) dataBase(bases ...string) (DataBase) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else {
@@ -392,7 +392,7 @@ func (ctx *Context) dataBase(bases ...string) (DataBase) {
 	return ctx.databases[base]
 }
 func (ctx *Context) cacheBase(bases ...string) (CacheBase) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else {

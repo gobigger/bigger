@@ -93,14 +93,14 @@ func (module *fileModule) Decode(code string) (*FileCoding) {
 
 
 func (module *fileModule) Assign(name string, metadata Map, bases ...string) (string,*Error) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(name); node != ""{
 		//按权重随机分散文件存储
 		base = node
 	} else {
-		base = kDEFAULT
+		base = DEFAULT
 	}
 
 	if metadata==nil {
@@ -202,7 +202,7 @@ func (data *FileCoding) Full() string {
 
 //返回文件Base对象
 func (module *fileModule) Base(names ...string) (FileBase) {
-	name := kDEFAULT
+	name := DEFAULT
 	if len(names) > 0 {
 		name = names[0]
 	} else {

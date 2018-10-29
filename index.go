@@ -148,7 +148,7 @@ func initConfig() {
 
     //默认logger驱动
     if config.Logger.Driver == "" {
-        config.Logger.Driver = kDEFAULT
+        config.Logger.Driver = DEFAULT
     }
     if config.Logger.Flag == "" {
         config.Logger.Flag = config.Node.Name
@@ -156,7 +156,7 @@ func initConfig() {
 
     //默认plan驱动
     if config.Plan.Driver == "" {
-        config.Plan.Driver = kDEFAULT
+        config.Plan.Driver = DEFAULT
     }
     if config.Plan.Prefix == "" {
         config.Plan.Prefix = config.Name
@@ -164,7 +164,7 @@ func initConfig() {
 
     //默认锁驱动
     if config.Mutex.Driver == "" {
-        config.Mutex.Driver = kDEFAULT
+        config.Mutex.Driver = DEFAULT
     }
     if config.Mutex.Prefix == "" {
         config.Mutex.Prefix = config.Name
@@ -172,7 +172,7 @@ func initConfig() {
 
     //默认session驱动
     if config.Session.Driver == "" {
-        config.Session.Driver = kDEFAULT
+        config.Session.Driver = DEFAULT
     }
     if config.Session.Prefix == "" {
         config.Session.Prefix = config.Name
@@ -180,7 +180,7 @@ func initConfig() {
 
     //默认HTTP驱动
     if config.Http.Driver == "" {
-        config.Http.Driver = kDEFAULT
+        config.Http.Driver = DEFAULT
     }
     if config.Http.Port <= 0 || config.Http.Port > 65535 {
         config.Http.Port = config.Node.Port
@@ -188,7 +188,7 @@ func initConfig() {
 
     //默认view驱动
     if config.View.Driver == "" {
-        config.View.Driver = kDEFAULT
+        config.View.Driver = DEFAULT
     }
 
 
@@ -215,9 +215,9 @@ func initConfig() {
     //默认file驱动
     if config.File == nil {
         config.File = map[string]FileConfig {
-            kDEFAULT: FileConfig {
-                Driver: kDEFAULT, Setting: Map{
-                    "storage": "store/storage", "thumbnail": "store/thumbnail",
+            DEFAULT: FileConfig {
+                Driver: DEFAULT, Setting: Map{
+                    "storage": "store/files/storage", "thumbnail": "store/files/thumbnail",
                 },
             },
         }
@@ -226,8 +226,8 @@ func initConfig() {
     //默认cache驱动
     if config.Cache == nil {
         config.Cache = map[string]CacheConfig {
-            kDEFAULT: CacheConfig {
-                Driver: kDEFAULT,
+            DEFAULT: CacheConfig {
+                Driver: DEFAULT,
                 Prefix: config.Name,
             },
         }
@@ -243,8 +243,8 @@ func initConfig() {
     //默认event驱动
     if config.Event == nil {
         config.Event = map[string]EventConfig{
-            kDEFAULT: EventConfig {
-                Driver: kDEFAULT,
+            DEFAULT: EventConfig {
+                Driver: DEFAULT,
                 Prefix: config.Name,
             },
         }
@@ -260,8 +260,8 @@ func initConfig() {
     //默认queue驱动
     if config.Queue == nil {
         config.Queue = map[string]QueueConfig{
-            kDEFAULT: QueueConfig {
-                Driver: kDEFAULT,
+            DEFAULT: QueueConfig {
+                Driver: DEFAULT,
                 Prefix: config.Name,
             },
         }
@@ -278,8 +278,8 @@ func initConfig() {
     //默认socket驱动
     if config.Socket == nil {
         config.Socket = map[string]SocketConfig{
-            kDEFAULT: SocketConfig {
-                Driver: kDEFAULT,
+            DEFAULT: SocketConfig {
+                Driver: DEFAULT,
                 Prefix: config.Name,
             },
         }
@@ -346,9 +346,9 @@ func initConfig() {
 
 
 
-    if config.Path.Node == "" {
-        config.Path.Node = "node"
-    }
+    // if config.Path.Node == "" {
+    //     config.Path.Node = "store"
+    // }
     if config.Path.Lang == "" {
         config.Path.Lang = "asset/langs"
     }
@@ -452,9 +452,9 @@ func initConst() {
     }
 
     //加载语言包
-    strs,err := loadLang(fmt.Sprintf("%v/%v.toml", Bigger.Config.Path.Lang, kDEFAULT))
+    strs,err := loadLang(fmt.Sprintf("%v/%v.toml", Bigger.Config.Path.Lang, DEFAULT))
     if err == nil {
-        mCONST.Lang(kDEFAULT, strs)
+        mCONST.Lang(DEFAULT, strs)
     }
     for lang,_ := range Bigger.Config.Lang {
         strs,err := loadLang(fmt.Sprintf("%v/%v.toml", Bigger.Config.Path.Lang, lang))

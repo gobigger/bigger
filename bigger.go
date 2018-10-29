@@ -204,7 +204,7 @@ func (bigger *bigger) Go() {
 
 
 func (bigger *bigger) raftIniting() {
-	raft := newRaftStore(bigger.Config.Path.Node, bigger.Config.Node.Bind)
+	raft := newRaftStore(bigger.Config.Path.Store, bigger.Config.Node.Bind)
 	if err := raft.Open(bigger.Config.Node.Join); err != nil {
 		panic("[RAFT] 打开失败：" + err.Error())
     }
@@ -334,7 +334,7 @@ func (bigger *bigger) Status(code int, status string, text string, overrides ...
         overrides = append(overrides, false)
     }
     mCONST.Status(Map{ status: code }, overrides...)
-    mCONST.Lang(kDEFAULT, Map{ status: text }, overrides...)
+    mCONST.Lang(DEFAULT, Map{ status: text }, overrides...)
     return newError(status)
 }
 
@@ -365,6 +365,10 @@ func (bigger *bigger) Driver(name string, obj Any) {
     case SocketDriver:
         mSOCKET.Driver(name, driver)
     }
+}
+
+func (bigger *bigger) Block(name string) (*biggerBlock) {
+    return &biggerBlock{name}
 }
 
 

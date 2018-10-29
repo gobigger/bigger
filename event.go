@@ -147,7 +147,7 @@ func (module *eventModule) Handler(name string, config Map, overrides ...bool) {
 
 //触发器只在当前进程有效
 func (module *eventModule) Trigger(name string, value Map, bases ...string) (*Error) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(name); node != "" {
@@ -171,7 +171,7 @@ func (module *eventModule) Trigger(name string, value Map, bases ...string) (*Er
 	return Bigger.Erring("[事件]无效连接")
 }
 func (module *eventModule) SyncTrigger(name string, value Map, bases ...string) (*Error) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(name); node != "" {
@@ -195,7 +195,7 @@ func (module *eventModule) SyncTrigger(name string, value Map, bases ...string) 
 	return Bigger.Erring("[事件]无效连接")
 }
 func (module *eventModule) Publish(name string, value Map, bases ...string) (*Error) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(name); node != "" {
@@ -219,7 +219,7 @@ func (module *eventModule) Publish(name string, value Map, bases ...string) (*Er
 	return Bigger.Erring("[事件]无效连接")
 }
 func (module *eventModule) DeferredPublish(name string, delay time.Duration, value Map, bases ...string) *Error {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(name); node != "" {

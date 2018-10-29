@@ -150,7 +150,7 @@ func (module *queueModule) Handler(name string, config Map, overrides ...bool) {
 
 
 func (module *queueModule) Produce(name string, value Map, bases ...string) (*Error) {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(name); node != "" {
@@ -175,7 +175,7 @@ func (module *queueModule) Produce(name string, value Map, bases ...string) (*Er
 }
 
 func (module *queueModule) DeferredProduce(name string, delay time.Duration, value Map, bases ...string) *Error {
-	base := kDEFAULT
+	base := DEFAULT
 	if len(bases) > 0 {
 		base = bases[0]
 	} else if node := module.hashring.Locate(name); node != "" {

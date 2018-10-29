@@ -15,7 +15,7 @@ type (
 	创建错误对象
 */
 func newError(status string, args ...Any) (*Error) {
-    return &Error{ kDEFAULT, status, args }
+    return &Error{ DEFAULT, status, args }
 }
 
 

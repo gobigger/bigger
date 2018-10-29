@@ -428,7 +428,7 @@ func (module *dataModule) exiting() {
 
 //返回数据Base对象
 func (module *dataModule)  Base(names ...string) (DataBase) {
-    name := kDEFAULT
+    name := DEFAULT
 	if len(names) > 0 {
 		name = names[0]
 	} else {

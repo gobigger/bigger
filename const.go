@@ -192,11 +192,11 @@ func (module *constModule) Lang(lang string, config Map, overrides ...bool) {
 
 func (module *constModule) LangString(lang, name string, args ...Any) string {
 	if lang == "" {
-		lang = kDEFAULT
+		lang = DEFAULT
 	}
 
 
-	defaultKey := fmt.Sprintf("%v.%v", kDEFAULT, name)
+	defaultKey := fmt.Sprintf("%v.%v", DEFAULT, name)
 	langKey := fmt.Sprintf("%v.%v", lang, name)
 
 	langStr := ""

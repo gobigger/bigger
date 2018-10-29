@@ -108,7 +108,7 @@ func (module *cacheModule) exiting() {
 
 //返回缓存Base对象
 func (module *cacheModule)  Base(names ...string) (CacheBase) {
-    name := kDEFAULT
+    name := DEFAULT
 	if len(names) > 0 {
 		name = names[0]
 	} else {

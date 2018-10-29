@@ -20,7 +20,7 @@ import (
 
 const (
 	testPath      = "permTest"
-	snapPath      = "snapshots"
+	snapPath      = "snaps"	//snapshots
 	metaFilePath  = "meta.json"
 	stateFilePath = "state.bin"
 	tmpSuffix     = ".tmp"
