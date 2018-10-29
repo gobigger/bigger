@@ -346,9 +346,9 @@ func initConfig() {
 
 
 
-    // if config.Path.Node == "" {
-    //     config.Path.Node = "store"
-    // }
+    if config.Path.Store == "" {
+        config.Path.Store = "store"
+    }
     if config.Path.Lang == "" {
         config.Path.Lang = "asset/langs"
     }

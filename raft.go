@@ -1006,6 +1006,13 @@ func (transport *sshTransport) generateSSHKey(targetDir string) (privateKeyPem [
 	privateKeyPem = pem.EncodeToMemory(&privateKeyBlock)
 
 	if len(targetDir) > 0 {
+
+		_,e := os.Stat(targetDir)
+		if e != nil {
+			//创建目录，如果不存在
+			os.MkdirAll(targetDir, 0700)
+		}
+
 		//persist key to raftDir
 		err = ioutil.WriteFile(filepath.Join(targetDir, transport.privateFile), privateKeyPem, 0600)
 
