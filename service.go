@@ -102,13 +102,15 @@ func (module *serviceModule) Invoke(ctx *Context, name string, setting Map, para
 		defer ctx.final()
 	}
 
-	args := Map{}
-	if arging,ok := config[kARGS].(Map); ok {
-		err := mMAPPING.Parse(arging, params, args, false, false, ctx)
-		if err != nil {
-			return nil, Bigger.Erring("[服务]参数解析失败")
-		}
-	}
+	// args := Map{}
+	// if arging,ok := config[kARGS].(Map); ok {
+	// 	err := mMAPPING.Parse(arging, params, args, false, false, ctx)
+	// 	if err != nil {
+	// 		return nil, Bigger.Erring("[服务]参数解析失败")
+	// 	}
+	// }
+
+	args := params
 
 	if setting == nil {
 		setting = Map{}
@@ -121,20 +123,22 @@ func (module *serviceModule) Invoke(ctx *Context, name string, setting Map, para
 	}
 
 	if ff,ok := config[kACTION].(serviceAction); ok {
-		result,err := ff(msv)
-		if err != nil {
-			return result, err
-		}
+		return ff(msv)
 
-		if dating,ok := config[kDATA].(Map); ok {
-			out := Map{}
-			err := mMAPPING.Parse(dating, result, out, false, false, ctx)
-			if err == nil {
-				return out, nil
-			}
-		}
+		// result,err := ff(msv)
+		// if err != nil {
+		// 	return result, err
+		// }
 
-		return result, nil
+		// if dating,ok := config[kDATA].(Map); ok {
+		// 	out := Map{}
+		// 	err := mMAPPING.Parse(dating, result, out, false, false, ctx)
+		// 	if err == nil {
+		// 		return out, nil
+		// 	}
+		// }
+
+		// return result, nil
 	}
 
 	return nil,Bigger.Erring("[服务]调用失败")
