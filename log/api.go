@@ -3,7 +3,7 @@ package log
 import (
 	"fmt"
 	"strconv"
-	"github.com/yatlabs/bigger/util"
+	"github.com/gobigger/bigger/util"
 	"errors"
 	"reflect"
 )

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"encoding/json"
 	"net/http"
-	"github.com/yatlabs/bigger/hashring"
+	"github.com/gobigger/bigger/hashring"
 )
 
 type (

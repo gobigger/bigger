@@ -19,7 +19,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"golang.org/x/crypto/ssh"
-	"github.com/yatlabs/bigger/raft"
+	"github.com/gobigger/bigger/raft"
 )
 
 const (

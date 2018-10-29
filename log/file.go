@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 	"errors"
-	"github.com/yatlabs/bigger/util"
+	"github.com/gobigger/bigger/util"
 	"reflect"
 )
 

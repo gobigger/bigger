@@ -6,7 +6,7 @@ import (
 	"strings"
 	"fmt"
 	"io"
-	"github.com/yatlabs/bigger/hashring"
+	"github.com/gobigger/bigger/hashring"
 )
 
 

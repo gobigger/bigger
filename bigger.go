@@ -16,8 +16,8 @@ import (
     "fmt"
     "encoding/json"
     "encoding/base64"
-    "github.com/yatlabs/bigger/hashid"
-    "github.com/yatlabs/bigger/fastid"
+    "github.com/gobigger/bigger/hashid"
+    "github.com/gobigger/bigger/fastid"
 )
 
 var (

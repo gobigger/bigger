@@ -13,7 +13,7 @@ import (
 	"io"
 	"os"
 	"path"
-	"github.com/yatlabs/bigger/toml"
+	"github.com/gobigger/bigger/toml"
 )
 
 

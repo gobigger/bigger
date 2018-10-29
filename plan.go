@@ -2,7 +2,7 @@ package bigger
 
 import (
 	"time"
-	"github.com/yatlabs/bigger/raft"
+	"github.com/gobigger/bigger/raft"
 )
 
 

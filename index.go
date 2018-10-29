@@ -7,9 +7,9 @@ import (
     "os"
     "fmt"
     "encoding/base64"
-    "github.com/yatlabs/bigger/fastid"
-    "github.com/yatlabs/bigger/hashid"
-    "github.com/yatlabs/bigger/toml"
+    "github.com/gobigger/bigger/fastid"
+    "github.com/gobigger/bigger/hashid"
+    "github.com/gobigger/bigger/toml"
 )
 
 var (

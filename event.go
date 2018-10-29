@@ -2,7 +2,7 @@ package bigger
 
 import (
 	"time"
-	"github.com/yatlabs/bigger/hashring"
+	"github.com/gobigger/bigger/hashring"
 )
 
 
