@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	// "github.com/armon/go-metrics"
 )
 
 const (

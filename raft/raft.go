@@ -11,8 +11,6 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
-	// "github.com/armon/go-metrics"
 )
 
 const (
