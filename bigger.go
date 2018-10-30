@@ -645,8 +645,8 @@ func (bigger *bigger) DeferredBroadcast(channel, message string, delay time.Dura
 func (bigger *bigger) Service(name string) (*serviceGroup) {
     return mSERVICE.newGroup(name)
 }
-func (bigger *bigger) Register(name string, config Map) {
-	mSERVICE.Register(name, config)
+func (bigger *bigger) Register(name string, config Map, overrides ...bool) {
+	mSERVICE.Register(name, config, overrides...)
 }
 // func (bigger *bigger) Invoke(name string, args Map) (Map,*Error) {
 // 	return mSERVICE.Invoke(nil, name, nil, args)
@@ -689,6 +689,16 @@ func (bigger *bigger) Invoking(count int64, results []Map, errs ...*Error) (Map,
     return Map{
         "count":    count,
         "items":    results,
+    }, err
+}
+//包装服务请求结果
+func (bigger *bigger) Invoked(result bool, errs ...*Error) (Map,*Error) {
+    var err *Error
+    if len(errs) > 0 {
+        err = errs[0]
+    }
+    return Map{
+        "result":   result,
     }, err
 }
 //---------------------- mutex --------------------------

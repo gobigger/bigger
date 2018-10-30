@@ -364,6 +364,11 @@ var (
 			"type": "[map]", "must": true, "auto": []Map{}, "name": "列表", "text": "列表",
 		},
 	}
+	BiggerInvokedConfig = Map{
+		"result": Map{
+			"type": "bool", "must": true, "auto": false, "name": "结果", "text": "结果",
+		},
+	}
 )
 
 

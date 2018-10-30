@@ -67,9 +67,33 @@ func (group *serviceGroup) Register(name string, config Map, overrides ...bool) 
 
 
 //分组调用
-func (client *serviceLogic) Invoke(name string, params Map) (Map,*Error) {
-	return client.service.Invoke(client.ctx, name, client.Setting, params)
+func (logic *serviceLogic) Invoke(name string, params ...Map) (Map) {
+	return logic.ctx.Invoke(name, params...)
 }
+func (logic *serviceLogic) Invokes(name string, params ...Map) ([]Map) {
+	return logic.ctx.Invokes(name, params...)
+}
+func (logic *serviceLogic) Invoking(name string, offset, limit int64, params ...Map) (int64,[]Map) {
+	return logic.ctx.Invoking(name, offset, limit, params...)
+}
+func (logic *serviceLogic) Invoker(name string, params ...Map) (Map,[]Map) {
+	return logic.ctx.Invoker(name, params...)
+}
+func (logic *serviceLogic) Invoked(name string, params ...Map) (bool) {
+	return logic.ctx.Invoked(name, params...)
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 func (module *serviceModule) Register(name string, config Map, overrides ...bool) {
     override := true
@@ -164,18 +188,25 @@ func (sv *Service) Storage(upload Map, named Any, metadata Map, bases ...string)
 	return sv.Ctx.Storage(upload, named, metadata, bases...)
 }
 func (sv *Service) Invoke(name string, params ...Map) (Map) {
-	sv.Ctx.lastError = nil
-
-	param := Map{}
-	if len(params) > 0 {
-		param = params[0]
-	}
-	result,err := mSERVICE.Invoke(sv.Ctx, name, sv.Setting, param)
-	if err != nil {
-		sv.Ctx.lastError = err
-	}
-	return result
+	return sv.Ctx.Invoke(name, params...)
 }
+func (sv *Service) Invokes(name string, params ...Map) ([]Map) {
+	return sv.Ctx.Invokes(name, params...)
+}
+func (sv *Service) Invoking(name string, offset, limit int64, params ...Map) (int64,[]Map) {
+	return sv.Ctx.Invoking(name, offset, limit, params...)
+}
+func (sv *Service) Invoker(name string, params ...Map) (Map,[]Map) {
+	return sv.Ctx.Invoker(name, params...)
+}
+func (sv *Service) Invoked(name string, params ...Map) (bool) {
+	return sv.Ctx.Invoked(name, params...)
+}
+
+
+
+
+
 
 // func (sv *Service) Signed(key string) (bool) {
 // 	return sv.Ctx.Signed(key)

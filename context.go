@@ -803,6 +803,16 @@ func (ctx *Context) Invoker(name string, params ...Map) (Map,[]Map) {
 	return result, []Map{ result }
 }
 
+func (ctx *Context) Invoked(name string, params ...Map) (bool) {
+	result := ctx.Invoke(name, params...)
+	if result != nil {
+		if vv,ok := result["result"].(bool); ok {
+			return vv
+		}
+	}
+	return false
+}
+
 func (ctx *Context) Download(code string, names ...string) {
 	reader, data, err := Bigger.Download(code)
 	if err != nil {
