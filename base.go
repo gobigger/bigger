@@ -221,6 +221,7 @@ const (
 	REMOVED = "removed"
 
 	DELIMS	= `"`	//字段以及表名边界符，自己实现数据驱动才需要处理这个，必须能启标识作用
+	RANDBY	= `$RANDBY$`
 
 	COUNT   = "COUNT"
 	SUM     = "SUM"
@@ -294,6 +295,7 @@ const (
 type (
 	dataNil		struct {}
 	dataNol		struct {}
+	dataRand	struct {}
 	dataAsc		struct {}
 	dataDesc	struct {}
 )
@@ -303,6 +305,7 @@ var (
 	NOL		dataNol		//不为空	IS NOT NULL
 	NULL	dataNil		//为空	IS NULL
 	NOLL	dataNol		//不为空	IS NOT NULL
+	RAND	dataRand
 	ASC		dataAsc		//正序	asc
 	DESC	dataDesc	//倒序	desc
 )

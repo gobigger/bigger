@@ -571,6 +571,10 @@ func (module *dataModule) parsing(args ...Map) ([]string,[]interface{},[]string)
                 //倒序
                 orders = append(orders, fmt.Sprintf(`%s DESC`, k))
 
+            } else if v==RAND {
+                //随机排序
+                orders = append(orders, fmt.Sprintf(`%s ASC`, RANDBY))
+
             } else if v == nil {
                 ands = append(ands, fmt.Sprintf(`%s IS NULL`, k))
             } else if v == NIL {
