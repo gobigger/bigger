@@ -218,7 +218,7 @@ const (
 */
 
 const (
-	REMOVED = "removed"
+	// REMOVED = "removed"
 
 	DELIMS	= `"`	//字段以及表名边界符，自己实现数据驱动才需要处理这个，必须能启标识作用
 	RANDBY	= `$RANDBY$`
