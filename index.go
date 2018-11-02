@@ -136,13 +136,13 @@ func initConfig() {
         config.serial.begin = time.Date(2018, 10, 1, 0, 0, 0, 0, time.Local).UnixNano()
     }
     if config.serial.Time <= 0 {
-        config.serial.Time = 43
+        config.serial.Time = 45
     }
     if config.serial.Node <= 0 {
-        config.serial.Node = 7
+        config.serial.Node = 6
     }
     if config.serial.Seq <= 0 {
-        config.serial.Seq = 13
+        config.serial.Seq = 12
     }
 
 
