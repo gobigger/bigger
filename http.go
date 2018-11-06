@@ -1,6 +1,8 @@
 package bigger
 
 import (
+	"encoding/base64"
+	"regexp"
 	"net/url"
 	"strings"
 	"net/http"
@@ -116,6 +118,7 @@ type (
 		model	Any
 	}
 
+	rawBody string
 )
 
 
@@ -689,6 +692,51 @@ func (module *httpModule) execute(ctx *Context) {
 
 
 
+//专门处理base64格式的文件上传
+func (module *httpModule) formUploadHandler(values []string) ([]Map) {
+	files := []Map{}
+
+	baseExp := regexp.MustCompile(`data\:(.*)\;base64,(.*)`)
+	for _,base := range values {
+		arr := baseExp.FindStringSubmatch(base)
+		if len(arr) == 3 {
+			baseBytes,err := base64.StdEncoding.DecodeString(arr[2])
+			if err == nil {
+				h := sha1.New()
+				if _, err := h.Write(baseBytes); err == nil {
+					hash := fmt.Sprintf("%x", h.Sum(nil))
+
+					mimeType := arr[1]
+					extension := mCONST.TypeMime(mimeType)
+					filename := fmt.Sprintf("%s.%s", hash, extension)
+					length := len(baseBytes)
+
+					//保存临时文件
+					tempfile := path.Join(Bigger.Config.Path.Upload, fmt.Sprintf("%s_%s", Bigger.Name, hash))
+					if extension != "" {
+						tempfile = fmt.Sprintf("%s.%s", tempfile, extension)
+					}
+
+					if save, err := os.OpenFile(tempfile, os.O_WRONLY|os.O_CREATE, 0777); err == nil {
+						defer save.Close()
+						if _,err := save.Write(baseBytes); err == nil {
+							files = append(files, Map{
+								"hash": hash,
+								"filename": filename,
+								"extension": strings.ToLower(extension),
+								"mimetype": mimeType,
+								"length": length,
+								"tempfile": tempfile,
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return files
+}
 func (module *httpModule) formHandler(ctx *Context) (*Error) {
 	var req = ctx.http.req.Reader
 
@@ -745,6 +793,7 @@ func (module *httpModule) formHandler(ctx *Context) (*Error) {
 		}
 	}
 
+	uploads := map[string][]Map{}
 	
 	if ctx.Method == "POST" || ctx.Method == "PUT" || ctx.Method == "PATCH" {
 		//根据content-type来处理
@@ -752,7 +801,7 @@ func (module *httpModule) formHandler(ctx *Context) (*Error) {
 		if strings.Contains(ctype, "json") {
 			body, err := ioutil.ReadAll(req.Body)
 			if err == nil {
-				ctx.Body = string(body)
+				ctx.Body = rawBody(body)
 
 				m := Map{}
 				err := json.Unmarshal(body, &m)
@@ -761,13 +810,35 @@ func (module *httpModule) formHandler(ctx *Context) (*Error) {
 					for k,v := range m {
 						ctx.Form[k] = v
 						ctx.Value[k] = v
+
+						if vs,ok := v.(string); ok {
+							baseFiles := module.formUploadHandler([]string{vs})
+							if len(baseFiles) > 0 {
+								uploads[k] = baseFiles
+							}
+						} else if vs,ok := v.([]Any); ok {
+							vsList := []string{}
+							for _,vsa := range vs {
+								if vss,ok := vsa.(string); ok {
+									vsList = append(vsList, vss)
+								}
+							}
+
+							if len(vsList) > 0 {
+								baseFiles := module.formUploadHandler(vsList)
+								if len(baseFiles) > 0 {
+									uploads[k] = baseFiles
+								}
+							}
+						}
+
 					}
 				}
 			}
 		} else if strings.Contains(ctype, "xml") {
 			body, err := ioutil.ReadAll(req.Body)
 			if err == nil {
-				ctx.Body = string(body)
+				ctx.Body = rawBody(body)
 				
 				m := Map{}
 				err := xml.Unmarshal(body, &m)
@@ -789,7 +860,7 @@ func (module *httpModule) formHandler(ctx *Context) (*Error) {
 				//表单解析有问题，就处理成原始STRING
 				body, err := ioutil.ReadAll(req.Body)
 				if err == nil {
-					ctx.Body = string(body)
+					ctx.Body = rawBody(body)
 				}
 
 			}
@@ -798,7 +869,7 @@ func (module *httpModule) formHandler(ctx *Context) (*Error) {
 
 			names := []string{}
 			values := url.Values{}
-			uploads := map[string][]Map{}
+			// uploads := map[string][]Map{}
 
 			if req.MultipartForm != nil {
 
@@ -908,6 +979,15 @@ func (module *httpModule) formHandler(ctx *Context) (*Error) {
 					ctx.Form[k] = v
 				}
 
+
+				//解析base64文件 begin
+				baseFiles := module.formUploadHandler([]string(v))
+				if len(baseFiles) > 0 {
+					uploads[k] = baseFiles
+				}
+				//解析base64文件 end
+
+
 				// key := fmt.Sprintf("value[%s]", k)
 				// forms[k] = v
 
@@ -1014,18 +1094,16 @@ func (module *httpModule) formHandler(ctx *Context) (*Error) {
 					}
 				}
 			}
+		}
+	}
 
-			for k,v := range uploads {
-				if len(v) == 1 {
-					ctx.Value[k] = v[0]
-					ctx.Upload[k] = v[0]
-				} else if len(v) > 1 {
-					ctx.Value[k] = v
-					ctx.Upload[k] = v
-				}
-			}
-
-
+	for k,v := range uploads {
+		if len(v) == 1 {
+			ctx.Value[k] = v[0]
+			ctx.Upload[k] = v[0]
+		} else if len(v) > 1 {
+			ctx.Value[k] = v
+			ctx.Upload[k] = v
 		}
 	}
 
