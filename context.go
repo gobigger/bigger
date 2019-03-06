@@ -1435,9 +1435,15 @@ func (ctx *Context) Result(err *Error, args ...Map) {
 //data必须为json，因为data节点可能统一加密
 //如果在data同级返回其它数据，如page信息， 会有泄露数据风险
 //所以这里强制data必须为json
-func (ctx *Context) Answer(data Map) {
+func (ctx *Context) Answer(datas ...Map) {
 	if ctx.mode != httpMode {
 		panic("[上下文]非HTTP上下文")
+	}
+
+	if len(datas) > 0 {
+		for k,v := range datas[0] {
+			ctx.Data[k] = v
+		}
 	}
 
 	//如果已经存在了httpDownBody，那还要把原有的reader关闭
@@ -1448,7 +1454,7 @@ func (ctx *Context) Answer(data Map) {
 
 	ctx.Type = "json"
 	ctx.Code = http.StatusOK
-	ctx.Body = httpApiBody{0, "", data}
+	ctx.Body = httpApiBody{0, "", ctx.Data}
 }
 
 
