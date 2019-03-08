@@ -165,6 +165,31 @@ func (group *httpGroup) Router(name string, config Map, overrides ...bool) {
 	}
 	group.http.Router(realName, config, overrides...)
 }
+func (group *httpGroup) Filter(name string, config Map, overrides ...bool) {
+	realName := fmt.Sprintf("%s.%s", group.name, name)
+	group.http.Filter(realName, config, overrides...)
+}
+func (group *httpGroup) Handler(name string, config Map, overrides ...bool) {
+	realName := fmt.Sprintf("%s.%s", group.name, name)
+	group.http.Handler(realName, config, overrides...)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 func (module *httpModule) Driver(name string, driver HttpDriver, overrides ...bool) {
