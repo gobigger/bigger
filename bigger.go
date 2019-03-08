@@ -408,12 +408,18 @@ func (bigger *bigger) Express(name string, defs ...string) ([]string) {
 func (bigger *bigger) Match(value, regular string) bool {
     return mCONST.RegularMatch(value, regular)
 }
+func (bigger *bigger) Results() Map {
+    return mCONST.Results()
+}
 //---------------------- mapping --------------------------
 func (bigger *bigger) Type(name string, config Map, overrides ...bool) {
     mMAPPING.Type(name, config, overrides...)
 }
 func (bigger *bigger) Crypto(name string, config Map, overrides ...bool) {
     mMAPPING.Crypto(name, config, overrides...)
+}
+func (bigger *bigger) Cryptos() Map {
+    return mMAPPING.Cryptos()
 }
 func (bigger *bigger) Mapping(config Map, data Map, value Map, argn bool, pass bool, ctxs ...*Context) *Error {
     return mMAPPING.Parse(config, data, value, argn, pass, ctxs...)
@@ -587,7 +593,7 @@ func (bigger *bigger) Site(name string, roots ...string) (*httpGroup) {
 func (bigger *bigger) Router(name string, config Map, overrides ...bool) {
     mHTTP.Router(name, config, overrides...)
 }
-func (bigger *bigger) Routers(sites ...string) ([]KVPair) {
+func (bigger *bigger) Routers(sites ...string) (Map) {
     return mHTTP.Routers(sites...)
 }
 func (bigger *bigger) Filter(name string, config Map, overrides ...bool) {
@@ -849,15 +855,6 @@ func (bigger *bigger) Unique(prefixs ...string) string {
     } else {
         return bigger.Enhash(id)
     }
-}
-
-//生成文档
-func (bigger *bigger) Document(sites ...string) Map {
-    doc := Map{}
-
-
-
-    return doc
 }
 
 func (bigger *bigger) Caller(skips ...int) (string,int,string,bool) {

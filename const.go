@@ -125,6 +125,16 @@ func (module *constModule) CodeStatus(code int, defs ...string) string {
 	return ""
 }
 
+func (module *constModule) Results() (Map) {
+	chunks := module.status.chunks()
+	codes := Map{}
+	for _,chunk := range chunks {
+		code := fmt.Sprintf("%v", chunk.data)
+		codes[code] = module.LangString(DEFAULT, chunk.name)
+	}
+	return codes
+}
+
 
 
 func (module *constModule) Regular(config Map, overrides ...bool) {

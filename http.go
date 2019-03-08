@@ -189,18 +189,26 @@ func (module *httpModule) Driver(name string, driver HttpDriver, overrides ...bo
 
 
 
-//因为router.key要返回，所以不能用数组
-func (module *httpModule) Routers(sites ...string) ([]KVPair) {
+//忽略排序
+func (module *httpModule) Routers(sites ...string) (Map) {
 	prefixs := []string{}
 	if len(sites) > 0 {
 		prefixs = append(prefixs, sites[0] + ".")
 	}
 	chunks := module.router.chunks(prefixs...)
-	routers := []KVPair{}
+
+	routers := Map{}
 	for _,chunk := range chunks {
-		routers = append(routers, KVPair{chunk.name, chunk.data})
+		routers[chunk.name] = chunk.data
 	}
+
 	return routers
+	
+	// routers := []KVPair{}
+	// for _,chunk := range chunks {
+	// 	routers = append(routers, KVPair{chunk.name, chunk.data})
+	// }
+	// return routers
 }
 func (module *httpModule) Router(name string, config Map, overrides ...bool) {
 

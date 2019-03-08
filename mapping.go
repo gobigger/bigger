@@ -66,6 +66,15 @@ func (module *mappingModule) Crypto(name string, config Map, overrides ...bool) 
     }
 }
 
+func (module *mappingModule) Cryptos() (Map) {
+	chunks := module.crypto.chunks()
+	cryptos := Map{}
+	for _,chunk := range chunks {
+		cryptos[chunk.name] = chunk.data
+	}
+	return cryptos
+}
+
 
 func (module *mappingModule) typeDefaultValid(value Any, config Map) bool {
     if t,ok := config[kTYPE]; ok {
